@@ -1,8 +1,26 @@
 import React from 'react';
 
-function Card({ title, category, date }) {
+function Card({ id, title, category, date }) {
   const categoryClass = category === 'Web Design' ? '_orange' : 
                         category === 'Research' ? '_green' : '_purple';
+
+  // Функция для преобразования даты из формата DD.MM.YYYY в DD.MM.YY
+  const formatDate = (dateString) => {
+    if (!dateString) return '30.10.23';
+    
+    // Если дата уже в формате DD.MM.YY
+    if (dateString.length === 8) return dateString;
+    
+    // Если дата в формате DD.MM.YYYY
+    if (dateString.length === 10) {
+      const [day, month, year] = dateString.split('.');
+      return `${day}.${month}.${year.slice(2)}`;
+    }
+    
+    return '30.10.23';
+  };
+
+  const formattedDate = formatDate(date);
 
   return (
     <div className="cards__item">
@@ -11,7 +29,7 @@ function Card({ title, category, date }) {
           <div className={`card__theme ${categoryClass}`}>
             <p className={categoryClass}>{category}</p>
           </div>
-          <a href="#popBrowse" target="_self">
+          <a href="#popBrowse" target="_self" rel="noopener noreferrer">
             <div className="card__btn">
               <div></div>
               <div></div>
@@ -20,7 +38,7 @@ function Card({ title, category, date }) {
           </a>
         </div>
         <div className="card__content">
-          <a href="" target="_blank">
+          <a href={`#task-${id}`} target="_blank" rel="noopener noreferrer">
             <h3 className="card__title">{title}</h3>
           </a>
           <div className="card__date">
@@ -35,7 +53,7 @@ function Card({ title, category, date }) {
                 </clipPath>
               </defs>
             </svg>
-            <p>{date}</p>
+            <p>{formattedDate}</p>
           </div>
         </div>
       </div>

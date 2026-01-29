@@ -1,13 +1,24 @@
 import React from 'react';
 import Column from '../Column/Column';
+import { cardList } from '../../data.js'; // Импортируем данные
 
 function Main() {
-  const columns = [
-    { title: 'Без статуса', cards: 5 },
-    { title: 'Нужно сделать', cards: 1 },
-    { title: 'В работе', cards: 3 },
-    { title: 'Тестирование', cards: 1 },
-    { title: 'Готово', cards: 1 },
+  // Группируем карточки по статусам
+  const groupedCards = cardList.reduce((groups, card) => {
+    if (!groups[card.status]) {
+      groups[card.status] = [];
+    }
+    groups[card.status].push(card);
+    return groups;
+  }, {});
+
+  // Определяем порядок колонок
+  const columnOrder = [
+    'Без статуса', 
+    'Нужно сделать', 
+    'В работе', 
+    'Тестирование', 
+    'Готово'
   ];
 
   return (
@@ -15,8 +26,12 @@ function Main() {
       <div className="container">
         <div className="main__block">
           <div className="main__content">
-            {columns.map((column, index) => (
-              <Column key={index} title={column.title} cardsCount={column.cards} />
+            {columnOrder.map((status) => (
+              <Column 
+                key={status} 
+                title={status} 
+                cards={groupedCards[status] || []} 
+              />
             ))}
           </div>
         </div>
