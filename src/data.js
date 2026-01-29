@@ -29,7 +29,7 @@
   },
   {
     id: 5,
-    theme: "Web Design",
+    theme: "Research",
     title: "Название задачи",
     date: "30.10.2023",
     status: "Без статуса",
