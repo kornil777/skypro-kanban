@@ -121,7 +121,7 @@ body {
   color: #FFFFFF;
 }
 
-.pop-user-set:target,
+
 .pop-exit:target,
 .pop-new-card:target,
 .pop-browse:target {
@@ -820,7 +820,6 @@ body {
   padding: 0;
 }
 .header__pop-user-set {
-  display: none;
   position: absolute;
   top: 61px;
   right: 0;
