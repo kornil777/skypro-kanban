@@ -10,6 +10,9 @@ export const PopUserSet = styled.div`
   padding: 34px;
   text-align: center;
   z-index: 2;
+  position: absolute;
+  margin-top: 245px;
+  margin-left: 72px;
 `;
 
 export const PopUserName = styled.p`

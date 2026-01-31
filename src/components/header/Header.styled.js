@@ -1,13 +1,14 @@
 import styled from 'styled-components';
 
 export const HeaderContainer = styled.header`
-  max-width: 1260px;
+  
   width: 100%;
   margin: 0 auto;
   padding: 0 30px;
 `;
 
 export const HeaderBlock = styled.div`
+  width: 1440px;
   height: 70px;
   display: flex;
   flex-wrap: nowrap;
@@ -16,6 +17,7 @@ export const HeaderBlock = styled.div`
   top: 0;
   left: 0;
   padding: 0 5px;
+  background-color: #FFFFFF
 `;
 
 export const HeaderLogo = styled.div`
@@ -30,15 +32,17 @@ export const HeaderLogo = styled.div`
   &.dark {
     display: ${props => props.theme === 'dark' ? 'block' : 'none'};
   }
+  padding-left: 80px;
 `;
 
 export const HeaderNav = styled.nav`
- margin-left: 811px;
+ margin-left: 807px;
  max-width: 290px;
   padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding-bottom: 3px;
 `;
 
 export const HeaderBtnMainNew = styled.button`
@@ -46,7 +50,7 @@ export const HeaderBtnMainNew = styled.button`
   height: 30px;
   border-radius: 4px;
   background-color: #565EEF;
-  color: #FFFFFF;
+  color: #ffffff;
   border: none;
   font-size: 14px;
   line-height: 1;
