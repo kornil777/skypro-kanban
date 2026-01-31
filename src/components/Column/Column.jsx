@@ -1,12 +1,17 @@
 import React from 'react';
 import Card from '../Card/Card';
+import {
+  ColumnContainer,
+  ColumnTitle,
+  ColumnTitleText
+} from './Column.styled.js';
 
 function Column({ title, cards }) {
   return (
-    <div className="main__column column">
-      <div className="column__title">
-        <p>{title}</p>
-      </div>
+    <ColumnContainer>
+      <ColumnTitle>
+        <ColumnTitleText>{title}</ColumnTitleText>
+      </ColumnTitle>
       <div className="cards">
         {cards.map((card) => (
           <Card 
@@ -18,7 +23,7 @@ function Column({ title, cards }) {
           />
         ))}
       </div>
-    </div>
+    </ColumnContainer>
   );
 }
 

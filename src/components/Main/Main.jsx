@@ -1,6 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import Column from '../Column/Column';
-import './Main.css'; // Добавим CSS для стилизации загрузки
+import ColumnComponent from '../Column/Column';
+import {
+  MainContainer,
+  MainBlock,
+  MainContent,
+  LoadingContainer,
+  LoadingSpinner,
+  LoadingText,
+  ErrorContainer,
+  ErrorText,
+  RetryButton,
+  Container
+} from './Main.styled.js';
 
 function Main() {
   const [cards, setCards] = useState([]);
@@ -48,41 +59,41 @@ function Main() {
   ];
 
   return (
-    <main className="main">
-      <div className="container">
-        <div className="main__block">
+    <MainContainer>
+      <Container>
+        <MainBlock>
           {isLoading ? (
             // Показываем индикатор загрузки
-            <div className="loading-container">
-              <div className="loading-spinner"></div>
-              <p className="loading-text">Данные загружаются...</p>
-            </div>
+            <LoadingContainer>
+              <LoadingSpinner />
+              <LoadingText>Данные загружаются...</LoadingText>
+            </LoadingContainer>
           ) : error ? (
             // Показываем ошибку
-            <div className="error-container">
-              <p className="error-text">{error}</p>
-              <button 
-                className="retry-button _hover01" 
+            <ErrorContainer>
+              <ErrorText>{error}</ErrorText>
+              <RetryButton 
+                className="_hover01" 
                 onClick={() => window.location.reload()}
               >
                 Попробовать снова
-              </button>
-            </div>
+              </RetryButton>
+            </ErrorContainer>
           ) : (
             // Показываем контент после загрузки
-            <div className="main__content">
+            <MainContent>
               {columnOrder.map((status) => (
-                <Column 
+                <ColumnComponent 
                   key={status} 
                   title={status} 
                   cards={groupedCards[status] || []} 
                 />
               ))}
-            </div>
+            </MainContent>
           )}
-        </div>
-      </div>
-    </main>
+        </MainBlock>
+      </Container>
+    </MainContainer>
   );
 }
 
