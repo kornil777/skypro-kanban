@@ -1,28 +1,29 @@
+// src/components/Calendar/Calendar.styled.js
 import styled from 'styled-components';
 
 export const CalendarContainer = styled.div`
   width: 182px;
   margin-bottom: 20px;
 
-  @media screen and (max-width: 660px) {
+  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
     max-width: 340px;
     width: 100%;
   }
 
-  @media screen and (max-width: 495px) {
+  @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
     width: 100%;
   }
 `;
 
 export const CalendarTitle = styled.p`
-  color: #000;
-  font-size: 14px;
-  font-weight: 600;
+  color: ${({ theme }) => theme.colors.textPrimary};
+  font-size: ${({ theme }) => theme.fonts.sizes.md};
+  font-weight: ${({ theme }) => theme.fonts.weights.semibold};
   line-height: 1;
   margin-bottom: 14px;
   padding: 0 7px;
 
-  @media screen and (max-width: 660px) {
+  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
     padding: 0;
   }
 `;
@@ -32,10 +33,10 @@ export const CalendarBlock = styled.div`
 `;
 
 export const CalendarMonth = styled.div`
-  color: #94A6BE;
-  font-size: 14px;
+  color: ${({ theme }) => theme.colors.textSecondary};
+  font-size: ${({ theme }) => theme.fonts.sizes.md};
   line-height: 25px;
-  font-weight: 600;
+  font-weight: ${({ theme }) => theme.fonts.weights.semibold};
 `;
 
 export const CalendarContent = styled.div`
@@ -50,24 +51,21 @@ export const CalendarDaysNames = styled.div`
   margin: 7px 0;
   padding: 0 7px;
 
-  @media screen and (max-width: 660px) {
+  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
     padding: 0;
   }
 `;
 
 export const CalendarDayName = styled.div`
-  color: #94A6BE;
-  font-size: 10px;
-  font-weight: 500;
+  color: ${({ theme, $weekend }) => 
+    $weekend ? theme.colors.weekend : theme.colors.textSecondary};
+  font-size: ${({ theme }) => theme.fonts.sizes.xs};
+  font-weight: ${({ theme }) => theme.fonts.weights.medium};
   line-height: normal;
   letter-spacing: -0.2px;
 
-  &.weekend {
-    color: #FF6D6D;
-  }
-
-  @media screen and (max-width: 660px) {
-    font-size: 14px;
+  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
+    font-size: ${({ theme }) => theme.fonts.sizes.md};
   }
 `;
 
@@ -77,7 +75,7 @@ export const CalendarCells = styled.div`
   display: flex;
   flex-wrap: wrap;
 
-  @media screen and (max-width: 660px) {
+  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
     width: 344px;
     height: auto;
     display: flex;
@@ -85,7 +83,7 @@ export const CalendarCells = styled.div`
     justify-content: space-around;
   }
 
-  @media screen and (max-width: 495px) {
+  @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
     width: 100%;
   }
 `;
@@ -99,38 +97,32 @@ export const CalendarCell = styled.div`
   flex-wrap: nowrap;
   align-items: center;
   justify-content: center;
-  color: #94A6BE;
-  font-size: 10px;
+  color: ${({ theme, $weekend, $active, $otherMonth }) => {
+    if ($active) return theme.colors.textLight;
+    if ($weekend) return theme.colors.weekend;
+    if ($otherMonth) return theme.colors.textSecondary;
+    return theme.colors.textSecondary;
+  }};
+  font-size: ${({ theme }) => theme.fonts.sizes.xs};
   line-height: 1;
   letter-spacing: -0.2px;
-  cursor: pointer;
+  cursor: ${({ $otherMonth }) => $otherMonth ? 'default' : 'pointer'};
+  opacity: ${({ $otherMonth }) => $otherMonth ? 0 : 1};
+  font-weight: ${({ $current }) => $current ? 700 : 400};
+  background-color: ${({ theme, $active }) => 
+    $active ? theme.colors.textSecondary : 'transparent'};
 
-  &.other-month {
-    opacity: 0;
+  &:hover {
+    color: ${({ theme, $otherMonth }) => 
+      $otherMonth ? theme.colors.textSecondary : theme.colors.textSecondary};
+    background-color: ${({ theme, $otherMonth }) => 
+      $otherMonth ? 'transparent' : theme.colors.backgroundGray};
   }
 
-  &.cell-day:hover {
-    color: #94A6BE;
-    background-color: #EAEEF6;
-  }
-
-  &.weekend {
-    color: #FF6D6D;
-  }
-
-  &.current {
-    font-weight: 700;
-  }
-
-  &.active-day {
-    background-color: #94A6BE;
-    color: #FFFFFF;
-  }
-
-  @media screen and (max-width: 660px) {
+  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
     width: 42px;
     height: 42px;
-    font-size: 14px;
+    font-size: ${({ theme }) => theme.fonts.sizes.md};
   }
 `;
 
@@ -142,7 +134,7 @@ export const CalendarNav = styled.div`
   margin-top: 14px;
   padding: 0 7px;
 
-  @media screen and (max-width: 660px) {
+  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
     padding: 0;
   }
 `;
@@ -162,11 +154,11 @@ export const NavAction = styled.div`
   justify-content: center;
 
   svg {
-    fill: #94A6BE;
-    transition: fill 0.3s;
+    fill: ${({ theme }) => theme.colors.textSecondary};
+    transition: fill ${({ theme }) => theme.animations.transition};
 
     &:hover {
-      fill: #000000;
+      fill: ${({ theme }) => theme.colors.textPrimary};
     }
   }
 `;
@@ -174,21 +166,21 @@ export const NavAction = styled.div`
 export const CalendarPeriod = styled.div`
   padding: 0 7px;
 
-  @media screen and (max-width: 660px) {
+  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
     padding: 0;
   }
 `;
 
 export const CalendarParagraph = styled.p`
-  color: #94A6BE;
-  font-size: 10px;
+  color: ${({ theme }) => theme.colors.textSecondary};
+  font-size: ${({ theme }) => theme.fonts.sizes.xs};
   line-height: 1;
 
   span {
-    color: #000000;
+    color: ${({ theme }) => theme.colors.textPrimary};
   }
 
-  @media screen and (max-width: 660px) {
-    font-size: 14px;
+  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
+    font-size: ${({ theme }) => theme.fonts.sizes.md};
   }
 `;

@@ -3,16 +3,17 @@ import Card from '../Card/Card';
 import {
   ColumnContainer,
   ColumnTitle,
-  ColumnTitleText
-} from './Column.styled.js';
+  ColumnTitleText,
+  CardsContainer
+} from './Column.styled';
 
 function Column({ title, cards }) {
   return (
-    <ColumnContainer>
+    <ColumnContainer className="column">
       <ColumnTitle>
         <ColumnTitleText>{title}</ColumnTitleText>
       </ColumnTitle>
-      <div className="cards">
+      <CardsContainer className="cards">
         {cards.map((card) => (
           <Card 
             key={card.id}
@@ -22,7 +23,7 @@ function Column({ title, cards }) {
             date={card.date} 
           />
         ))}
-      </div>
+      </CardsContainer>
     </ColumnContainer>
   );
 }

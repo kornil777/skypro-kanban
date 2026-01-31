@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import ColumnComponent from '../Column/Column';
+import React, { useState, useEffect } from "react";
+import ColumnComponent from "../Column/Column.jsx";
 import {
   MainContainer,
   MainBlock,
@@ -10,8 +10,8 @@ import {
   ErrorContainer,
   ErrorText,
   RetryButton,
-  Container
-} from './Main.styled.js';
+  Container,
+} from "./Main.styled.js";
 
 function Main() {
   const [cards, setCards] = useState([]);
@@ -23,17 +23,17 @@ function Main() {
     const loadCards = async () => {
       try {
         // Имитация задержки загрузки (2 секунды)
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+
         // Импортируем данные (имитация API запроса)
-        const { cardList } = await import('../../data.js');
-        
+        const { cardList } = await import("../../data.js");
+
         setCards(cardList);
         setIsLoading(false);
       } catch (err) {
-        setError('Ошибка при загрузке данных');
+        setError("Ошибка при загрузке данных");
         setIsLoading(false);
-        console.error('Ошибка загрузки:', err);
+        console.error("Ошибка загрузки:", err);
       }
     };
 
@@ -51,11 +51,11 @@ function Main() {
 
   // Определяем порядок колонок
   const columnOrder = [
-    'Без статуса', 
-    'Нужно сделать', 
-    'В работе', 
-    'Тестирование', 
-    'Готово'
+    "Без статуса",
+    "Нужно сделать",
+    "В работе",
+    "Тестирование",
+    "Готово",
   ];
 
   return (
@@ -72,8 +72,8 @@ function Main() {
             // Показываем ошибку
             <ErrorContainer>
               <ErrorText>{error}</ErrorText>
-              <RetryButton 
-                className="_hover01" 
+              <RetryButton
+                className="_hover01"
                 onClick={() => window.location.reload()}
               >
                 Попробовать снова
@@ -83,10 +83,10 @@ function Main() {
             // Показываем контент после загрузки
             <MainContent>
               {columnOrder.map((status) => (
-                <ColumnComponent 
-                  key={status} 
-                  title={status} 
-                  cards={groupedCards[status] || []} 
+                <ColumnComponent
+                  key={status}
+                  title={status}
+                  cards={groupedCards[status] || []}
                 />
               ))}
             </MainContent>

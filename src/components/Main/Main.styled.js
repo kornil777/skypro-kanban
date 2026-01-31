@@ -1,42 +1,29 @@
 import styled, { keyframes } from 'styled-components';
+import { media } from '..//../styles/styledUtils'; 
 
-// Анимация спиннера
 const spin = keyframes`
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 `;
 
-// Анимация карточки из App.css
-const cardAnimation = keyframes`
-  0% {
-    height: 0;
-    opacity: 0;
-  }
-  100% {
-    height: auto;
-    opacity: 1;
-  }
-`;
-
-// Основные стили
 export const MainContainer = styled.main`
   width: 100%;
-  background-color: #EAEEF6;
+  background-color: ${({ theme }) => theme.colors.backgroundGray};
 `;
 
 export const MainBlock = styled.div`
   width: 100%;
   margin: 0 auto;
-  padding: 22px 0 49px;
+  padding: 25px 0 49px;
 `;
 
 export const MainContent = styled.div`
   width: 100%;
   display: flex;
 
-  @media screen and (max-width: 1200px) {
+  ${media.xl(`
     display: block;
-  }
+  `)}
 `;
 
 export const Column = styled.div`
@@ -44,11 +31,11 @@ export const Column = styled.div`
   margin: 0 auto;
   display: block;
 
-  @media screen and (max-width: 1200px) {
+  ${media.xl(`
     width: 100%;
     margin: 0 auto;
     display: block;
-  }
+  `)}
 `;
 
 export const ColumnTitle = styled.div`
@@ -57,26 +44,13 @@ export const ColumnTitle = styled.div`
 `;
 
 export const ColumnTitleText = styled.p`
-  color: #94A6BE;
-  font-size: 14px;
-  font-weight: 600;
+  color: ${({ theme }) => theme.colors.textSecondary};
+  font-size: ${({ theme }) => theme.fonts.sizes.md};
+  font-weight: ${({ theme }) => theme.fonts.weights.semibold};
   line-height: 1;
   text-transform: uppercase;
 `;
 
-export const CardsContainer = styled.div`
-  width: 100%;
-  display: block;
-  position: relative;
-
-  @media screen and (max-width: 1200px) {
-    width: 100%;
-    display: flex;
-    overflow-y: auto;
-  }
-`;
-
-// Стили для состояния загрузки и ошибки
 export const LoadingContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -90,28 +64,28 @@ export const LoadingSpinner = styled.div`
   width: 50px;
   height: 50px;
   border: 4px solid #f3f3f3;
-  border-top: 4px solid #565eef;
+  border-top: 4px solid ${({ theme }) => theme.colors.primary};
   border-radius: 50%;
   animation: ${spin} 1s linear infinite;
   margin-bottom: 20px;
 
-  @media (max-width: 768px) {
+  ${media.lg(`
     width: 40px;
     height: 40px;
     border-width: 3px;
-  }
+  `)}
 `;
 
 export const LoadingText = styled.p`
-  font-size: 18px;
-  color: #94a6be;
-  font-weight: 500;
+  font-size: ${({ theme }) => theme.fonts.sizes.lg};
+  color: ${({ theme }) => theme.colors.textSecondary};
+  font-weight: ${({ theme }) => theme.fonts.weights.medium};
   text-align: center;
   margin: 0;
 
-  @media (max-width: 768px) {
+  ${media.lg(`
     font-size: 16px;
-  }
+  `)}
 `;
 
 export const ErrorContainer = styled.div`
@@ -126,46 +100,46 @@ export const ErrorContainer = styled.div`
 `;
 
 export const ErrorText = styled.p`
-  font-size: 18px;
-  color: #ff6d6d;
-  font-weight: 500;
+  font-size: ${({ theme }) => theme.fonts.sizes.lg};
+  color: ${({ theme }) => theme.colors.error};
+  font-weight: ${({ theme }) => theme.fonts.weights.medium};
   margin-bottom: 20px;
 
-  @media (max-width: 768px) {
+  ${media.lg(`
     font-size: 16px;
-  }
+  `)}
 `;
 
 export const RetryButton = styled.button`
-  background-color: #565eef;
-  color: white;
+  background-color: ${({ theme }) => theme.colors.primary};
+  color: ${({ theme }) => theme.colors.textLight};
   border: none;
-  border-radius: 4px;
+  border-radius: ${({ theme }) => theme.sizes.borderRadius.small};
   padding: 12px 24px;
-  font-size: 14px;
-  font-weight: 500;
+  font-size: ${({ theme }) => theme.fonts.sizes.md};
+  font-weight: ${({ theme }) => theme.fonts.weights.medium};
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color ${({ theme }) => theme.animations.transition}
+    ease;
 
   &:hover {
-    background-color: #4a52d4;
+    background-color: ${({ theme }) => theme.colors.primaryHover};
   }
 
-  @media (max-width: 768px) {
+  ${media.lg(`
     padding: 10px 20px;
     font-size: 13px;
-  }
+  `)}
 `;
 
-// Глобальный контейнер из App.css
 export const Container = styled.div`
-  max-width: 1260px;
+  max-width: ${({ theme }) => theme.sizes.container};
   width: 100%;
   margin: 0 auto;
   padding: 0 30px;
 
-  @media screen and (max-width: 495px) {
+  ${media.sm(`
     width: 100%;
     padding: 0 16px;
-  }
+  `)}
 `;

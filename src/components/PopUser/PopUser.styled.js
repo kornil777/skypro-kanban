@@ -1,32 +1,33 @@
+// src/components/PopUser/PopUser.styled.js
 import styled from 'styled-components';
 
 export const PopUserSet = styled.div`
+  position: absolute;
+  top: 61px;
+  right: 0;
   width: 213px;
   height: 205px;
-  border-radius: 10px;
-  border: 0.7px solid rgba(148, 166, 190, 0.4);
-  background: #FFF;
-  box-shadow: 0px 10px 39px 0px rgba(26, 56, 101, 0.21);
+  border-radius: ${({ theme }) => theme.sizes.borderRadius.large};
+  border: 0.7px solid ${({ theme }) => theme.colors.borderLight};
+  background: ${({ theme }) => theme.colors.backgroundLight};
+  box-shadow: ${({ theme }) => theme.colors.shadow};
   padding: 34px;
   text-align: center;
   z-index: 2;
-  position: absolute;
-  margin-top: 245px;
-  margin-left: 72px;
 `;
 
 export const PopUserName = styled.p`
-  color: #000;
-  font-size: 14px;
-  font-weight: 500;
+  color: ${({ theme }) => theme.colors.textPrimary};
+  font-size: ${({ theme }) => theme.fonts.sizes.md};
+  font-weight: ${({ theme }) => theme.fonts.weights.medium};
   line-height: 21px;
   letter-spacing: -0.14px;
   margin-bottom: 4px;
 `;
 
 export const PopUserMail = styled.p`
-  color: #94A6BE;
-  font-size: 14px;
+  color: ${({ theme }) => theme.colors.textSecondary};
+  font-size: ${({ theme }) => theme.fonts.sizes.md};
   line-height: 21px;
   letter-spacing: -0.14px;
   margin-bottom: 10px;
@@ -40,8 +41,8 @@ export const PopUserTheme = styled.div`
 `;
 
 export const PopUserThemeText = styled.p`
-  color: #000;
-  font-size: 14px;
+  color: ${({ theme }) => theme.colors.textPrimary};
+  font-size: ${({ theme }) => theme.fonts.sizes.md};
   line-height: 21px;
   letter-spacing: -0.14px;
 `;
@@ -51,7 +52,7 @@ export const PopUserThemeCheckbox = styled.input.attrs({ type: 'checkbox' })`
   width: 24px;
   height: 13px;
   border-radius: 100px;
-  background: #EAEEF6;
+  background: ${({ theme }) => theme.colors.backgroundGray};
   outline: none;
   appearance: none;
   cursor: pointer;
@@ -64,7 +65,7 @@ export const PopUserThemeCheckbox = styled.input.attrs({ type: 'checkbox' })`
     width: 11px;
     height: 11px;
     border-radius: 50%;
-    background-color: #94A6BE;
+    background-color: ${({ theme }) => theme.colors.textSecondary};
     transition: 0.5s;
   }
 
@@ -79,23 +80,23 @@ export const PopUserExitButton = styled.button`
   width: 72px;
   height: 30px;
   background: transparent;
-  color: #565EEF;
-  border-radius: 4px;
-  border: 1px solid #565EEF;
+  color: ${({ theme }) => theme.colors.primary};
+  border-radius: ${({ theme }) => theme.sizes.borderRadius.small};
+  border: 1px solid ${({ theme }) => theme.colors.primary};
   cursor: pointer;
-  transition: all 300ms;
+  transition: all ${({ theme }) => theme.animations.transition};
 
   &:hover {
-    background-color: #33399b;
-    color: #FFFFFF;
+    background-color: ${({ theme }) => theme.colors.primaryHover};
+    color: ${({ theme }) => theme.colors.textLight};
     
     a {
-      color: #FFFFFF;
+      color: ${({ theme }) => theme.colors.textLight};
     }
   }
 
   a {
-    color: #565EEF;
+    color: ${({ theme }) => theme.colors.primary};
     text-decoration: none;
   }
 `;
