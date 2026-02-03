@@ -21,9 +21,12 @@ const GlobalStyles = createGlobalStyle`
     color: ${({ theme }) => theme.colors.textPrimary};
   }
 
+  body.modal-open {
+    overflow: hidden;
+  }
+
   #root {
     margin: 0 auto;
-    
   }
 
   .wrapper {

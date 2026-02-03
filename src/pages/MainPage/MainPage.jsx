@@ -8,11 +8,11 @@ import PopExit from '../../components/PopExit/PopExit';
 const MainPage = () => {
   return (
     <div className="wrapper">
-      <PopExit />
-      <PopNewCard />
-      <PopBrowse />
       <Header />
       <Main />
+      <PopExit />
+            <PopNewCard />
+      <PopBrowse />
     </div>
   );
 };

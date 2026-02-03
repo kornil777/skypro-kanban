@@ -1,31 +1,28 @@
 import styled from 'styled-components';
 
 export const PopExitContainer = styled.div`
-  display: none;
   width: 100%;
   height: 100%;
   min-width: 320px;
   min-height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+`;
+
+export const PopExitOverlay = styled.div`
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 5;
-
-  &:target {
-    display: block;
-  }
-`;
-
-export const PopExitInner = styled.div`
   width: 100%;
   height: 100%;
-  min-height: 100vh;
-  padding: 0 16px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
   background: ${({ theme }) => theme.colors.overlay};
+  backdrop-filter: blur(4px);
 `;
 
 export const PopExitBlock = styled.div`
@@ -38,9 +35,11 @@ export const PopExitBlock = styled.div`
   border-radius: ${({ theme }) => theme.sizes.borderRadius.large};
   border: 0.7px solid ${({ theme }) => theme.colors.border};
   box-shadow: 0px 4px 67px -12px rgba(0, 0, 0, 0.13);
+  position: relative;
+  z-index: 1001;
   
   @media (max-width: ${({ theme }) => theme.breakpoints.xs}) {
-    padding: 50px 20px;
+    padding: 40px 20px;
   }
 `;
 
@@ -51,9 +50,10 @@ export const PopExitTitle = styled.div`
   line-height: 30px;
   letter-spacing: -0.4px;
   margin-bottom: 20px;
+  color: ${({ theme }) => theme.colors.textPrimary};
 `;
 
-export const PopExitForm = styled.form`
+export const PopExitForm = styled.div`
   width: 100%;
   display: flex;
   align-items: center;
@@ -66,7 +66,7 @@ export const PopExitForm = styled.form`
 
 export const PopExitButton = styled.button`
   width: 153px;
-  height: 30px;
+  height: 40px;
   background-color: ${({ theme, $secondary }) => 
     $secondary ? 'transparent' : theme.colors.primary};
   border-radius: ${({ theme }) => theme.sizes.borderRadius.small};
@@ -90,26 +90,15 @@ export const PopExitButton = styled.button`
     background-color: ${({ theme, $secondary }) => 
       $secondary ? theme.colors.primaryHover : theme.colors.primaryHover};
     color: ${({ theme }) => theme.colors.textLight};
-    
-    a {
-      color: ${({ theme }) => theme.colors.textLight};
-    }
   }
 
-  a {
-    width: 100%;
-    height: 100%;
-    color: ${({ theme, $secondary }) => 
-      $secondary ? theme.colors.primary : theme.colors.textLight};
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-decoration: none;
+  &:last-child {
+    margin-right: 0;
   }
 
   @media (max-width: ${({ theme }) => theme.breakpoints.xs}) {
     width: 100%;
-    height: 40px;
+    height: 45px;
     margin-right: 0;
     margin-bottom: ${({ $secondary }) => $secondary ? '0' : '10px'};
   }

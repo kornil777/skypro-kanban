@@ -8,6 +8,7 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showExitModal, setShowExitModal] = useState(false);
 
   useEffect(() => {
     // Проверяем, есть ли данные пользователя в localStorage при загрузке
@@ -57,15 +58,27 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('kanban_isAuthenticated');
     setUser(null);
     setIsAuthenticated(false);
+    setShowExitModal(false);
+  };
+
+  const openExitModal = () => {
+    setShowExitModal(true);
+  };
+
+  const closeExitModal = () => {
+    setShowExitModal(false);
   };
 
   return (
     <AuthContext.Provider value={{
       isAuthenticated,
       user,
+      showExitModal,
       login,
       register,
       logout,
+      openExitModal,
+      closeExitModal,
       loading
     }}>
       {children}

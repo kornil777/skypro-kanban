@@ -12,12 +12,12 @@ import {
 } from './Header.styled';
 
 function Header() {
-  const { user, logout } = useAuth();
+  const { user, openExitModal } = useAuth();
   const [showMenu, setShowMenu] = useState(false);
 
-  const handleLogout = () => {
-    logout();
-    window.location.href = '/login';
+  const handleLogoutClick = () => {
+    setShowMenu(false);
+    openExitModal();
   };
 
   const toggleMenu = () => {
@@ -43,7 +43,7 @@ function Header() {
           {showMenu && (
             <UserMenu>
               <UserMenuItem>{user?.email}</UserMenuItem>
-              <UserMenuItem onClick={handleLogout}>Выйти</UserMenuItem>
+              <UserMenuItem onClick={handleLogoutClick}>Выйти</UserMenuItem>
             </UserMenu>
           )}
         </HeaderNav>
