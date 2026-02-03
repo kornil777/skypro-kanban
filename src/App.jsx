@@ -3,6 +3,7 @@ import { ThemeProvider } from "styled-components";
 import { AuthProvider } from "./context/AuthContext";
 import theme from "./styles/theme";
 import GlobalStyles from "./styles/GlobalStyles";
+import { ModalStyles } from "./styles/ModalStyles";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 
 // Страницы
@@ -18,6 +19,7 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyles />
+      <ModalStyles />
       <AuthProvider>
         <Router>
           <Routes>
@@ -28,9 +30,10 @@ function App() {
             {/* Защищенные маршруты */}
             <Route element={<ProtectedRoute />}>
               <Route path="/" element={<MainPage />} />
-              <Route path="/card/:id" element={<CardDetailPage />} />
-              <Route path="/new" element={<NewCardPage />} />
-              <Route path="/exit" element={<ExitPage />} />
+              {/* Маршруты для модальных окон - они будут рендерить MainPage с модальными окнами */}
+              <Route path="/card/:id" element={<MainPage />} />
+              <Route path="/new" element={<MainPage />} />
+              <Route path="/exit" element={<MainPage />} />
             </Route>
             
             {/* Маршрут 404 */}
