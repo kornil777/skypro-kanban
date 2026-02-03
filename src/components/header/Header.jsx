@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { useModal } from '../../context/ModalContext';
 import {
   HeaderContainer,
   HeaderBlock,
@@ -13,17 +13,16 @@ import {
 } from './Header.styled';
 
 function Header() {
-  const { user, openExitModal } = useAuth();
-  const { openNewCardModal } = useModal();
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [showMenu, setShowMenu] = useState(false);
 
-  const handleLogoutClick = () => {
-    setShowMenu(false);
-    openExitModal();
+  const handleNewCardClick = () => {
+    navigate('/new');
   };
 
-  const handleNewCardClick = () => {
-    openNewCardModal();
+  const handleExitClick = () => {
+    navigate('/exit');
   };
 
   const toggleMenu = () => {
@@ -34,13 +33,12 @@ function Header() {
     <HeaderContainer>
       <HeaderBlock>
         <HeaderLogo>
-          <img src="/images/logo.png" alt="logo" />
+          <img src="/vite.svg" alt="logo" />
         </HeaderLogo>
         
         <HeaderNav>
           <HeaderButton 
             className="_hover01" 
-            id="btnMainNew"
             onClick={handleNewCardClick}
           >
             Создать новую задачу
@@ -53,7 +51,7 @@ function Header() {
           {showMenu && (
             <UserMenu>
               <UserMenuItem>{user?.email}</UserMenuItem>
-              <UserMenuItem onClick={handleLogoutClick}>Выйти</UserMenuItem>
+              <UserMenuItem onClick={handleExitClick}>Выйти</UserMenuItem>
             </UserMenu>
           )}
         </HeaderNav>
