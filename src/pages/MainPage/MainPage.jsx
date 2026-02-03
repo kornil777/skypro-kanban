@@ -11,7 +11,7 @@ const MainPage = () => {
       <Header />
       <Main />
       <PopExit />
-            <PopNewCard />
+      <PopNewCard />
       <PopBrowse />
     </div>
   );

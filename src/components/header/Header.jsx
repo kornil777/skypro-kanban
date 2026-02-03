@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { useModal } from '../../context/ModalContext';
 import {
   HeaderContainer,
   HeaderBlock,
@@ -13,11 +14,16 @@ import {
 
 function Header() {
   const { user, openExitModal } = useAuth();
+  const { openNewCardModal } = useModal();
   const [showMenu, setShowMenu] = useState(false);
 
   const handleLogoutClick = () => {
     setShowMenu(false);
     openExitModal();
+  };
+
+  const handleNewCardClick = () => {
+    openNewCardModal();
   };
 
   const toggleMenu = () => {
@@ -28,11 +34,15 @@ function Header() {
     <HeaderContainer>
       <HeaderBlock>
         <HeaderLogo>
-          <img src="/vite.svg" alt="logo" />
+          <img src="/images/logo.png" alt="logo" />
         </HeaderLogo>
         
         <HeaderNav>
-          <HeaderButton className="_hover01" id="btnMainNew">
+          <HeaderButton 
+            className="_hover01" 
+            id="btnMainNew"
+            onClick={handleNewCardClick}
+          >
             Создать новую задачу
           </HeaderButton>
           

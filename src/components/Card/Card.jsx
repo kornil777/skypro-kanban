@@ -1,4 +1,5 @@
 import React from 'react';
+import { useModal } from '../../context/ModalContext';
 import {
   CardsItem,
   CardsCard,
@@ -11,9 +12,11 @@ import {
   CardContent,
   CardDate,
   CardDateText
-} from './Card.styled.js';
+} from './Card.styled';
 
-function Card({ id, title, category, date }) {
+function Card({ id, title, category, date, status, ...rest }) {
+  const { openBrowseModal } = useModal();
+
   // Функция для преобразования даты из формата DD.MM.YYYY в DD.MM.YY
   const formatDate = (dateString) => {
     if (!dateString) return '30.10.23';
@@ -30,16 +33,32 @@ function Card({ id, title, category, date }) {
     return '30.10.23';
   };
 
+  const handleCardClick = () => {
+    openBrowseModal({
+      id,
+      title,
+      category,
+      date,
+      status,
+      ...rest
+    });
+  };
+
+  const handleButtonClick = (e) => {
+    e.stopPropagation();
+    handleCardClick();
+  };
+
   const formattedDate = formatDate(date);
 
   return (
-    <CardsItem>
+    <CardsItem onClick={handleCardClick} style={{ cursor: 'pointer' }}>
       <CardsCard>
         <CardGroup>
-          <CardTheme $category={category}>  {/* Используем $ префикс */}
+          <CardTheme $category={category}>
             <CardThemeText>{category}</CardThemeText>
           </CardTheme>
-          <a href="#popBrowse" target="_self" rel="noopener noreferrer">
+          <a href="#popBrowse" onClick={handleButtonClick} style={{ textDecoration: 'none' }}>
             <CardBtn>
               <CardBtnDot></CardBtnDot>
               <CardBtnDot></CardBtnDot>
@@ -48,9 +67,7 @@ function Card({ id, title, category, date }) {
           </a>
         </CardGroup>
         <CardContent>
-          <a href={`#task-${id}`} target="_blank" rel="noopener noreferrer">
-            <CardTitle>{title}</CardTitle>
-          </a>
+          <CardTitle>{title}</CardTitle>
           <CardDate>
             <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 13 13" fill="none">
               <g clipPath="url(#clip0_1_415)">
