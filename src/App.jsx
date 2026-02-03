@@ -1,28 +1,19 @@
-import { useState } from "react";
-import viteLogo from "/vite.svg";
-import "./App.css";
-import Header from "./components/header/Header";
-import Main from "./components/Main/Main";
-import PopNewCard from "./components/PopNewCard/PopNewCard";
-import PopBrowse from "./components/PopBrowse/PopBrowse";
-import PopExit from "./components/PopExit/PopExit";
+import { BrowserRouter as Router } from "react-router-dom";
 import { ThemeProvider } from "styled-components";
+import { AuthProvider } from "./context/AuthContext";
 import theme from "./styles/theme";
 import GlobalStyles from "./styles/GlobalStyles";
+import AppRoutes from "./components/AppRoutes/AppRoutes";
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyles />
-      <div className="wrapper">
-        <PopExit />
-        <PopNewCard />
-        <PopBrowse />
-        <Header />
-        <Main />
-      </div>
+      <AuthProvider>
+        <Router>
+          <AppRoutes />
+        </Router>
+      </AuthProvider>
     </ThemeProvider>
   );
 }
