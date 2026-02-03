@@ -33,7 +33,7 @@ function Header() {
     <HeaderContainer>
       <HeaderBlock>
         <HeaderLogo>
-          <img src="/vite.svg" alt="logo" />
+          <img src="public\images\logo.png" alt="logo" />
         </HeaderLogo>
         
         <HeaderNav>

@@ -14,7 +14,7 @@ export const ModalStyles = createGlobalStyle`
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(4px);
+    /* backdrop-filter: blur(4px); */
     z-index: 1000;
     display: flex;
     align-items: center;
@@ -612,5 +612,159 @@ export const ModalStyles = createGlobalStyle`
     .calendar__days-names .calendar__day-name {
       font-size: 12px;
     }
+    /* Стили для статусов в режиме редактирования */
+  .status__theme._active-day {
+    background-color: #94A6BE !important;
+    color: #FFFFFF !important;
+    border-color: #94A6BE !important;
+  }
+
+  .status__theme._gray:not(._active-day) {
+    background-color: transparent !important;
+    color: #94A6BE !important;
+    border: 0.7px solid rgba(148, 166, 190, 0.4);
+  }
+
+  /* Стили для текстового поля в режиме редактирования */
+  .form-browse__area[readonly] {
+    background-color: #EAEEF6 !important;
+    cursor: default !important;
+  }
+
+  .form-browse__area:not([readonly]) {
+    background-color: #FFFFFF !important;
+    cursor: text !important;
+  }
+
+  /* Адаптивность для статусов */
+  @media (max-width: 660px) {
+    .status__themes {
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    .status__theme {
+      width: 100%;
+      text-align: center;
+      margin-right: 0 !important;
+    }
+  }
+  /* Стили для статусов в режиме редактирования */
+  .status__theme.edit-mode {
+    display: inline-block !important;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .status__theme.edit-selected {
+    background-color: #94A6BE !important;
+    color: #FFFFFF !important;
+    border-color: #94A6BE !important;
+    border: 0.7px solid #94A6BE !important;
+  }
+
+  .status__theme.edit-unselected {
+    background-color: #FFFFFF !important;
+    color: #94A6BE !important;
+    border: 0.7px solid #000000 !important;
+  }
+
+  /* При наведении на невыбранный статус в режиме редактирования */
+  .status__theme.edit-unselected:hover {
+    background-color: #F5F5F5 !important;
+    border-color: #333333 !important;
+  }
+
+  /* Стили для статусов в режиме просмотра */
+  .status__theme.view-mode {
+    border: 0.7px solid rgba(148, 166, 190, 0.4) !important;
+  }
+
+  .status__theme.view-mode._orange {
+    background-color: #FFE4C2 !important;
+    color: #FF6D00 !important;
+    border-color: #FFE4C2 !important;
+  }
+
+  .status__theme.view-mode._green {
+    background-color: #B4FDD1 !important;
+    color: #06B16E !important;
+    border-color: #B4FDD1 !important;
+  }
+
+  .status__theme.view-mode._purple {
+    background-color: #E9D4FF !important;
+    color: #9A48F1 !important;
+    border-color: #E9D4FF !important;
+  }
+
+  .status__theme.view-mode._gray {
+    background-color: #94A6BE !important;
+    color: #FFFFFF !important;
+    border-color: #94A6BE !important;
+  }
+
+  /* Стили для текстового поля в режиме редактирования */
+  .form-browse__area[readonly] {
+    background-color: #EAEEF6 !important;
+    cursor: default !important;
+  }
+
+  .form-browse__area:not([readonly]) {
+    background-color: #FFFFFF !important;
+    cursor: text !important;
+    border-color: rgba(148, 166, 190, 0.4) !important;
+  }
+
+  /* Улучшенные стили для календаря */
+  .calendar__cell._active-day {
+    background-color: #94A6BE !important;
+    color: #FFFFFF !important;
+  }
+
+  .calendar__cell._current {
+    font-weight: 700 !important;
+  }
+
+  .calendar__cell._weekend {
+    color: #FF6D6D !important;
+  }
+
+  .calendar__cell._cell-day:hover {
+    background-color: #EAEEF6 !important;
+  }
+
+  /* Адаптивность для статусов */
+  @media (max-width: 660px) {
+    .status__themes {
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    .status__theme {
+      width: 100%;
+      text-align: center;
+      margin-right: 0 !important;
+      margin-bottom: 10px !important;
+    }
+    
+    .pop-browse__btn-browse,
+    .pop-browse__btn-edit {
+      flex-direction: column;
+    }
+    
+    .pop-browse__btn-browse .btn-group,
+    .pop-browse__btn-edit .btn-group {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+    
+    .pop-browse__btn-browse button,
+    .pop-browse__btn-edit button {
+      width: 100%;
+      margin-right: 0;
+      margin-bottom: 10px;
+    }
+  }
   }
 `;

@@ -11,6 +11,7 @@ const PopBrowse = () => {
   const [description, setDescription] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('Нужно сделать');
   const [cardData, setCardData] = useState(null);
+  const [originalStatus, setOriginalStatus] = useState('');
 
   // Имитация данных карточки
   useEffect(() => {
@@ -23,8 +24,9 @@ const PopBrowse = () => {
         
         if (foundCard) {
           setCardData(foundCard);
-          setDescription(`Это пример описания задачи. Здесь может быть подробная информация о задаче "${foundCard.title}".`);
+          setDescription(`"${foundCard.title}".`);
           setSelectedStatus(foundCard.status || 'Нужно сделать');
+          setOriginalStatus(foundCard.status || 'Нужно сделать');
         }
       } catch (error) {
         console.error('Ошибка загрузки карточки:', error);
@@ -58,14 +60,16 @@ const PopBrowse = () => {
       description,
       status: selectedStatus
     });
+    setOriginalStatus(selectedStatus);
     setIsEditMode(false);
   };
 
   const handleCancel = () => {
     setIsEditMode(false);
+    setSelectedStatus(originalStatus);
+    
     if (cardData) {
-      setDescription(`Это пример описания задачи. Здесь может быть подробная информация о задаче "${cardData.title}".`);
-      setSelectedStatus(cardData.status || 'Нужно сделать');
+      setDescription(`"${cardData.title}".`);
     }
   };
 
@@ -73,6 +77,12 @@ const PopBrowse = () => {
     if (window.confirm('Вы уверены, что хотите удалить эту задачу?')) {
       console.log('Удаление карточки:', id);
       handleClose();
+    }
+  };
+
+  const handleStatusChange = (status) => {
+    if (isEditMode) {
+      setSelectedStatus(status);
     }
   };
 
@@ -107,6 +117,27 @@ const PopBrowse = () => {
     }
   };
 
+  // Функция для получения классов статуса
+  const getStatusClasses = (status) => {
+    if (isEditMode) {
+      // В режиме редактирования
+      if (selectedStatus === status) {
+        // Выбранный статус: белый текст на сером фоне
+        return 'status__theme edit-mode edit-selected';
+      } else {
+        // Невыбранные статусы: серый текст, белый фон, черная рамка
+        return 'status__theme edit-mode edit-unselected';
+      }
+    } else {
+      // В режиме просмотра
+      if (selectedStatus === status) {
+        return `status__theme view-mode ${getCategoryClass(cardData.theme)}`;
+      } else {
+        return 'status__theme _hide';
+      }
+    }
+  };
+
   return (
     <div className="popup-overlay" onClick={handleOverlayClick}>
       <div className="popup-container pop-browse">
@@ -124,18 +155,13 @@ const PopBrowse = () => {
               {statusOptions.map((status) => (
                 <div 
                   key={status}
-                  className={`status__theme ${
-                    selectedStatus === status ? getCategoryClass(cardData.theme) : '_hide'
-                  }`}
-                  onClick={() => isEditMode && setSelectedStatus(status)}
+                  className={getStatusClasses(status)}
+                  onClick={() => handleStatusChange(status)}
                   style={{ 
-                    cursor: isEditMode ? 'pointer' : 'default',
-                    display: selectedStatus === status ? 'inline-block' : 'none'
+                    cursor: isEditMode ? 'pointer' : 'default'
                   }}
                 >
-                  <p className={selectedStatus === status ? getCategoryClass(cardData.theme) : ''}>
-                    {status}
-                  </p>
+                  <p>{status}</p>
                 </div>
               ))}
             </div>
@@ -155,11 +181,14 @@ const PopBrowse = () => {
                   value={description}
                   onChange={(e) => isEditMode && setDescription(e.target.value)}
                   readOnly={!isEditMode}
+                  style={{ 
+                    backgroundColor: isEditMode ? '#FFFFFF' : '#EAEEF6',
+                    cursor: isEditMode ? 'text' : 'default'
+                  }}
                 />
               </div>
             </form>
             
-            {/* Используем ModalCalendar для PopBrowse */}
             <ModalCalendar type="browse" date="09.09.23" />
           </div>
           
