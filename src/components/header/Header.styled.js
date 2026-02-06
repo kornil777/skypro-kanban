@@ -16,32 +16,26 @@ export const HeaderBlock = styled.div`
   top: 0;
   left: 0;
   padding: 0 10px;
+  max-width: ${({ theme }) => theme.sizes.container};
+  margin: 0 auto;
 `;
 
 export const HeaderLogo = styled.div`
   img {
     width: 85px;
   }
-  
-  &.light {
-    display: ${props => props.$theme === 'light' ? 'none' : 'block'};
-  }
-  
-  &.dark {
-    display: ${props => props.$theme === 'dark' ? 'block' : 'none'};
-  }
-  
 `;
 
-export const HeaderNav = styled.nav`
+export const HeaderNav = styled.div`
   max-width: 290px;
   padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
 `;
 
-export const HeaderBtnMainNew = styled.button`
+export const HeaderButton = styled.button`
   width: 178px;
   height: 30px;
   border-radius: ${({ theme }) => theme.sizes.borderRadius.small};
@@ -53,31 +47,14 @@ export const HeaderBtnMainNew = styled.button`
   font-weight: ${({ theme }) => theme.fonts.weights.medium};
   margin-right: 20px;
   cursor: pointer;
-  transition: background-color ${({ theme }) => theme.animations.transition};
+  transition: background-color 0.3s;
 
   &:hover {
     background-color: ${({ theme }) => theme.colors.primaryHover};
   }
-
-  a {
-    color: ${({ theme }) => theme.colors.textLight};
-    text-decoration: none;
-  }
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
-    z-index: 3;
-    position: fixed;
-    left: 16px;
-    bottom: 30px;
-    top: auto;
-    width: calc(100vw - 32px);
-    height: 40px;
-    border-radius: ${({ theme }) => theme.sizes.borderRadius.small};
-    margin-right: 0;
-  }
 `;
 
-export const HeaderUser = styled.a`
+export const HeaderUser = styled.div`
   height: 20px;
   display: flex;
   flex-wrap: nowrap;
@@ -87,17 +64,8 @@ export const HeaderUser = styled.a`
   line-height: 20px;
   color: ${({ theme }) => theme.colors.primary};
   cursor: pointer;
-  text-decoration: none;
-  transition: color ${({ theme }) => theme.animations.transition};
-
-  &:hover {
-    color: ${({ theme }) => theme.colors.primaryHover};
-    
-    &:after {
-      border-left-color: ${({ theme }) => theme.colors.primaryHover};
-      border-bottom-color: ${({ theme }) => theme.colors.primaryHover};
-    }
-  }
+  position: relative;
+  padding-right: 15px;
 
   &::after {
     content: "";
@@ -108,8 +76,38 @@ export const HeaderUser = styled.a`
     border-left: 1.9px solid ${({ theme }) => theme.colors.primary};
     border-bottom: 1.9px solid ${({ theme }) => theme.colors.primary};
     transform: rotate(-45deg);
-    margin: -6px 0 0 5px;
-    padding: 0;
-    transition: border-color ${({ theme }) => theme.animations.transition};
+    position: absolute;
+    right: 0;
+    top: 50%;
+    margin-top: -3px;
+  }
+`;
+
+export const UserMenu = styled.div`
+  position: absolute;
+  top: 50px;
+  right: 0;
+  width: 200px;
+  background: ${({ theme }) => theme.colors.backgroundLight};
+  border-radius: ${({ theme }) => theme.sizes.borderRadius.medium};
+  border: 0.7px solid ${({ theme }) => theme.colors.borderLight};
+  box-shadow: ${({ theme }) => theme.colors.shadow};
+  padding: 15px;
+  z-index: 1000;
+`;
+
+export const UserMenuItem = styled.div`
+  padding: 10px 0;
+  color: ${({ theme }) => theme.colors.textPrimary};
+  font-size: ${({ theme }) => theme.fonts.sizes.md};
+  cursor: pointer;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.borderLight};
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    color: ${({ theme }) => theme.colors.primary};
   }
 `;

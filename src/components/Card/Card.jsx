@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   CardsItem,
   CardsCard,
@@ -11,17 +12,16 @@ import {
   CardContent,
   CardDate,
   CardDateText
-} from './Card.styled.js';
+} from './Card.styled';
 
-function Card({ id, title, category, date }) {
-  // Функция для преобразования даты из формата DD.MM.YYYY в DD.MM.YY
+function Card({ id, title, category, date, status }) {
+  const navigate = useNavigate();
+
   const formatDate = (dateString) => {
     if (!dateString) return '30.10.23';
     
-    // Если дата уже в формате DD.MM.YY
     if (dateString.length === 8) return dateString;
     
-    // Если дата в формате DD.MM.YYYY
     if (dateString.length === 10) {
       const [day, month, year] = dateString.split('.');
       return `${day}.${month}.${year.slice(2)}`;
@@ -30,27 +30,34 @@ function Card({ id, title, category, date }) {
     return '30.10.23';
   };
 
+  const handleCardClick = () => {
+    navigate(`/card/${id}`);
+  };
+
+  const handleButtonClick = (e) => {
+    e.stopPropagation();
+    navigate(`/card/${id}`);
+  };
+
   const formattedDate = formatDate(date);
 
   return (
-    <CardsItem>
+    <CardsItem onClick={handleCardClick}>
       <CardsCard>
         <CardGroup>
-          <CardTheme $category={category}>  {/* Используем $ префикс */}
+          <CardTheme $category={category}>
             <CardThemeText>{category}</CardThemeText>
           </CardTheme>
-          <a href="#popBrowse" target="_self" rel="noopener noreferrer">
+          <div onClick={handleButtonClick} style={{ cursor: 'pointer' }}>
             <CardBtn>
               <CardBtnDot></CardBtnDot>
               <CardBtnDot></CardBtnDot>
               <CardBtnDot></CardBtnDot>
             </CardBtn>
-          </a>
+          </div>
         </CardGroup>
         <CardContent>
-          <a href={`#task-${id}`} target="_blank" rel="noopener noreferrer">
-            <CardTitle>{title}</CardTitle>
-          </a>
+          <CardTitle>{title}</CardTitle>
           <CardDate>
             <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 13 13" fill="none">
               <g clipPath="url(#clip0_1_415)">
