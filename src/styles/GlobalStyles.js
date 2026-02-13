@@ -1,4 +1,3 @@
-// src/styles/GlobalStyles.js
 import { createGlobalStyle } from 'styled-components';
 
 const GlobalStyles = createGlobalStyle`
@@ -21,9 +20,12 @@ const GlobalStyles = createGlobalStyle`
     color: ${({ theme }) => theme.colors.textPrimary};
   }
 
+  body.modal-open {
+    overflow: hidden;
+  }
+
   #root {
     margin: 0 auto;
-    
   }
 
   .wrapper {
@@ -95,7 +97,7 @@ const GlobalStyles = createGlobalStyle`
     }
   }
 
-  // Утилитарные классы
+  // Утилитарные классы для категорий
   ._orange {
     background-color: ${({ theme }) => theme.colors.category.orange.background} !important;
     color: ${({ theme }) => theme.colors.category.orange.text} !important;
@@ -116,6 +118,12 @@ const GlobalStyles = createGlobalStyle`
     color: ${({ theme }) => theme.colors.category.gray.text} !important;
   }
 
+  // Активная категория
+  ._active-category {
+    opacity: 1 !important;
+  }
+
+  // Кнопки
   ._btn-bor {
     border-radius: ${({ theme }) => theme.sizes.borderRadius.small};
     border: 0.7px solid ${({ theme }) => theme.colors.primary};
@@ -140,8 +148,39 @@ const GlobalStyles = createGlobalStyle`
     }
   }
 
+  // Вспомогательные классы
   ._hide {
-    display: none;
+    display: none !important;
+  }
+
+  .subttl {
+    color: ${({ theme }) => theme.colors.textPrimary};
+    font-size: ${({ theme }) => theme.fonts.sizes.md};
+    font-weight: ${({ theme }) => theme.fonts.weights.semibold};
+    line-height: 1;
+  }
+
+  // Стили для календаря (можно оставить в компоненте, но для совместимости)
+  ._other-month {
+    opacity: 0;
+  }
+
+  ._cell-day:hover {
+    color: ${({ theme }) => theme.colors.textSecondary};
+    background-color: ${({ theme }) => theme.colors.backgroundGray};
+  }
+
+  ._active-day {
+    background-color: ${({ theme }) => theme.colors.textSecondary};
+    color: ${({ theme }) => theme.colors.textLight};
+  }
+
+  ._current {
+    font-weight: ${({ theme }) => theme.fonts.weights.bold};
+  }
+
+  .-weekend- {
+    color: ${({ theme }) => theme.colors.weekend};
   }
 `;
 

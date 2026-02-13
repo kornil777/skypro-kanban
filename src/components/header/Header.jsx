@@ -1,56 +1,61 @@
 import React, { useState } from 'react';
-import PopUser from '../PopUser/PopUser'; // Импортируем PopUser
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import {
   HeaderContainer,
   HeaderBlock,
   HeaderLogo,
   HeaderNav,
-  HeaderBtnMainNew,
-  HeaderUser
+  HeaderButton,
+  HeaderUser,
+  UserMenu,
+  UserMenuItem
 } from './Header.styled';
 
 function Header() {
-  const [isUserPopupOpen, setIsUserPopupOpen] = useState(false);
-  const [theme, setTheme] = useState('light');
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [showMenu, setShowMenu] = useState(false);
 
-  const toggleUserPopup = () => {
-    setIsUserPopupOpen(!isUserPopupOpen);
+  const handleNewCardClick = () => {
+    navigate('/new');
   };
 
-  const handleThemeToggle = () => {
-    setTheme(theme === 'light' ? 'dark' : 'light');
+  const handleExitClick = () => {
+    navigate('/exit');
+  };
+
+  const toggleMenu = () => {
+    setShowMenu(!showMenu);
   };
 
   return (
     <HeaderContainer>
-      <div className="container">
-        <HeaderBlock>
-          <HeaderLogo className={`light ${theme === 'light' ? '_show' : ''}`} theme={theme}>
-            <a href="" target="_self"><img src="/images/logo.png" alt="logo" /></a>
-          </HeaderLogo>
-          <HeaderLogo className="dark" theme={theme}>
-            <a href="" target="_self"><img src="/images/logo_dark.png" alt="logo" /></a>
-          </HeaderLogo>
-          <HeaderNav>
-            <HeaderBtnMainNew className="_hover01" id="btnMainNew">
-              <a href="#popNewCard">Создать новую задачу</a>
-            </HeaderBtnMainNew>
-            <HeaderUser
-              href="#" 
-              className="_hover02" 
-              onClick={(e) => {
-                e.preventDefault();
-                toggleUserPopup();
-              }}
-            >
-              Ivan Ivanov
-            </HeaderUser>
-            {isUserPopupOpen && (
-              <PopUser />
-            )}
-          </HeaderNav>
-        </HeaderBlock>
-      </div>
+      <HeaderBlock>
+        <HeaderLogo>
+          <img src="public\images\logo.png" alt="logo" />
+        </HeaderLogo>
+        
+        <HeaderNav>
+          <HeaderButton 
+            className="_hover01" 
+            onClick={handleNewCardClick}
+          >
+            Создать новую задачу
+          </HeaderButton>
+          
+          <HeaderUser onClick={toggleMenu} className="_hover02">
+            {user?.name || 'Пользователь'}
+          </HeaderUser>
+          
+          {showMenu && (
+            <UserMenu>
+              <UserMenuItem>{user?.email}</UserMenuItem>
+              <UserMenuItem onClick={handleExitClick}>Выйти</UserMenuItem>
+            </UserMenu>
+          )}
+        </HeaderNav>
+      </HeaderBlock>
     </HeaderContainer>
   );
 }
