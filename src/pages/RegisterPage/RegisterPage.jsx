@@ -14,37 +14,21 @@ import {
 
 const RegisterPage = () => {
   const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+  const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   
-  const { register } = useAuth();
+  const { register, error } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
     setLoading(true);
-
     try {
-      // Простая валидация
-      if (!name.trim()) {
-        throw new Error('Введите имя');
-      }
-      if (!email.trim()) {
-        throw new Error('Введите email');
-      }
-      if (password.length < 6) {
-        throw new Error('Пароль должен содержать минимум 6 символов');
-      }
-
-      const success = await register(email, password, name);
+      const success = await register(login, password, name);
       if (success) {
         navigate('/');
       }
-    } catch (err) {
-      setError(err.message);
     } finally {
       setLoading(false);
     }
@@ -58,11 +42,7 @@ const RegisterPage = () => {
         </RegisterTitle>
         
         {error && (
-          <div style={{ 
-            color: 'red', 
-            marginBottom: '15px', 
-            textAlign: 'center' 
-          }}>
+          <div style={{ color: 'red', marginBottom: '15px', textAlign: 'center' }}>
             {error}
           </div>
         )}
@@ -74,13 +54,15 @@ const RegisterPage = () => {
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
+            disabled={loading}
           />
           <RegisterInput
-            type="email"
-            placeholder="Эл. почта"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            type="text"
+            placeholder="Логин"
+            value={login}
+            onChange={(e) => setLogin(e.target.value)}
             required
+            disabled={loading}
           />
           <RegisterInput
             type="password"
@@ -88,6 +70,7 @@ const RegisterPage = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            disabled={loading}
           />
           <RegisterButton 
             type="submit" 

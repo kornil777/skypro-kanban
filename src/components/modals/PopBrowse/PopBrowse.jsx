@@ -1,115 +1,148 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useAuth } from '../../../context/AuthContext';
+import { useTasks } from '../../../context/TasksContext';
 import ModalCalendar from '../ModalCalendar/ModalCalendar';
 
 const PopBrowse = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { getTaskById, updateTask, deleteTask } = useTasks();
   const [isEditMode, setIsEditMode] = useState(false);
   const [description, setDescription] = useState('');
-  const [selectedStatus, setSelectedStatus] = useState('Нужно сделать');
-  const [cardData, setCardData] = useState(null);
+  const [selectedStatus, setSelectedStatus] = useState('');
+  const [taskData, setTaskData] = useState(null);
   const [originalStatus, setOriginalStatus] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState('');
+  const isMounted = useRef(true);
 
-  // Имитация данных карточки
   useEffect(() => {
-    document.body.classList.add('modal-open');
-    
-    const loadCard = async () => {
-      try {
-        const { cardList } = await import('../../../data.js');
-        const foundCard = cardList.find(card => card.id === parseInt(id));
-        
-        if (foundCard) {
-          setCardData(foundCard);
-          setDescription(`"${foundCard.title}".`);
-          setSelectedStatus(foundCard.status || 'Нужно сделать');
-          setOriginalStatus(foundCard.status || 'Нужно сделать');
-        }
-      } catch (error) {
-        console.error('Ошибка загрузки карточки:', error);
+  const controller = new AbortController();
+  const signal = controller.signal;
+  isMounted.current = true;
+  document.body.classList.add('modal-open');
+
+  const loadTask = async () => {
+    try {
+      const task = await getTaskById(id, signal);
+      if (!isMounted.current) return;
+      if (task) {
+        setTaskData(task);
+        setDescription(task.description || '');
+        setSelectedStatus(task.status || 'Без статуса');
+        setOriginalStatus(task.status || 'Без статуса');
+      } else {
+        navigate('/');
       }
-    };
+    } catch (err) {
+      if (err.name === 'AbortError' || err.code === 'ERR_CANCELED') {
+        console.log('Запрос отменён');
+        return;
+      }
+      if (!isMounted.current) return;
+      console.error('Error loading task:', err);
+      setError('Не удалось загрузить задачу');
+    } finally {
+      if (isMounted.current) setIsLoading(false);
+    }
+  };
 
-    loadCard();
+  loadTask();
 
-    return () => {
-      document.body.classList.remove('modal-open');
-    };
-  }, [id]);
+  return () => {
+    isMounted.current = false;
+    controller.abort(); // отменяем запрос при размонтировании
+    document.body.classList.remove('modal-open');
+  };
+}, [id, getTaskById, navigate]);
 
   const handleClose = () => {
     navigate(-1);
   };
 
   const handleOverlayClick = (e) => {
-    if (e.target === e.currentTarget) {
-      handleClose();
+    if (e.target === e.currentTarget) handleClose();
+  };
+
+  const handleEdit = () => setIsEditMode(true);
+
+  const handleSave = async () => {
+    setIsSubmitting(true);
+    setError('');
+    try {
+      const updatedData = {
+        title: taskData.title,
+        topic: taskData.topic,
+        status: selectedStatus,
+        description,
+        date: taskData.date,
+      };
+      const success = await updateTask(id, updatedData);
+      if (success) {
+        setOriginalStatus(selectedStatus);
+        setIsEditMode(false);
+      } else {
+        setError('Ошибка при сохранении');
+      }
+    } catch (err) {
+      setError('Не удалось сохранить изменения');
+    } finally {
+      setIsSubmitting(false);
     }
-  };
-
-  const handleEdit = () => {
-    setIsEditMode(true);
-  };
-
-  const handleSave = () => {
-    console.log('Сохранение карточки:', {
-      id,
-      description,
-      status: selectedStatus
-    });
-    setOriginalStatus(selectedStatus);
-    setIsEditMode(false);
   };
 
   const handleCancel = () => {
     setIsEditMode(false);
     setSelectedStatus(originalStatus);
-    
-    if (cardData) {
-      setDescription(`"${cardData.title}".`);
+    setDescription(taskData?.description || '');
+  };
+
+  const handleDelete = async () => {
+    if (!window.confirm('Вы уверены, что хотите удалить эту задачу?')) return;
+    setIsSubmitting(true);
+    setError('');
+    try {
+      const success = await deleteTask(id);
+      if (success) {
+        // Важно: сначала закрываем модалку, потом переходим на главную
+        // Замена записи в истории, чтобы нельзя было вернуться назад к удалённой задаче
+        navigate('/', { replace: true });
+      } else {
+        setError('Ошибка при удалении');
+      }
+    } catch (err) {
+      console.error('Delete error:', err);
+      setError(err.response?.data?.error || 'Не удалось удалить задачу');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const handleDelete = () => {
-    if (window.confirm('Вы уверены, что хотите удалить эту задачу?')) {
-      console.log('Удаление карточки:', id);
-      handleClose();
-    }
-  };
+  const statusOptions = ['Без статуса', 'Нужно сделать', 'В работе', 'Тестирование', 'Готово'];
 
-  const handleStatusChange = (status) => {
-    if (isEditMode) {
-      setSelectedStatus(status);
-    }
-  };
-
-  const statusOptions = [
-    'Без статуса',
-    'Нужно сделать', 
-    'В работе',
-    'Тестирование',
-    'Готово'
-  ];
-
-  if (!cardData) {
+  if (isLoading) {
     return (
       <div className="popup-overlay" onClick={handleOverlayClick}>
         <div className="popup-container pop-browse">
-          <div className="pop-browse__content">
-            <div style={{ textAlign: 'center', padding: '40px' }}>
-              Загрузка...
-            </div>
-          </div>
+          <div style={{ textAlign: 'center', padding: '40px' }}>Загрузка...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!taskData) {
+    return (
+      <div className="popup-overlay" onClick={handleOverlayClick}>
+        <div className="popup-container pop-browse">
+          <div style={{ textAlign: 'center', padding: '40px' }}>Задача не найдена</div>
         </div>
       </div>
     );
   }
 
   const getCategoryClass = (category) => {
-    switch(category) {
+    switch (category) {
       case 'Web Design': return '_orange';
       case 'Research': return '_green';
       case 'Copywriting': return '_purple';
@@ -117,24 +150,15 @@ const PopBrowse = () => {
     }
   };
 
-  // Функция для получения классов статуса
   const getStatusClasses = (status) => {
     if (isEditMode) {
-      // В режиме редактирования
-      if (selectedStatus === status) {
-        // Выбранный статус: белый текст на сером фоне
-        return 'status__theme edit-mode edit-selected';
-      } else {
-        // Невыбранные статусы: серый текст, белый фон, черная рамка
-        return 'status__theme edit-mode edit-unselected';
-      }
+      return status === selectedStatus
+        ? 'status__theme edit-mode edit-selected'
+        : 'status__theme edit-mode edit-unselected';
     } else {
-      // В режиме просмотра
-      if (selectedStatus === status) {
-        return `status__theme view-mode ${getCategoryClass(cardData.theme)}`;
-      } else {
-        return 'status__theme _hide';
-      }
+      return status === selectedStatus
+        ? `status__theme view-mode ${getCategoryClass(taskData.topic)}`
+        : 'status__theme _hide';
     }
   };
 
@@ -142,113 +166,83 @@ const PopBrowse = () => {
     <div className="popup-overlay" onClick={handleOverlayClick}>
       <div className="popup-container pop-browse">
         <div className="pop-browse__content">
+          {error && <div style={{ color: 'red', marginBottom: '15px' }}>{error}</div>}
           <div className="pop-browse__top-block">
-            <h3 className="pop-browse__ttl">{cardData.title}</h3>
-            <div className={`categories__theme theme-top ${getCategoryClass(cardData.theme)} _active-category`}>
-              <p className={getCategoryClass(cardData.theme)}>{cardData.theme}</p>
+            <h3 className="pop-browse__ttl">{taskData.title}</h3>
+            <div className={`categories__theme theme-top ${getCategoryClass(taskData.topic)} _active-category`}>
+              <p>{taskData.topic}</p>
             </div>
           </div>
-          
+
           <div className="pop-browse__status status">
             <p className="status__p subttl">Статус</p>
             <div className="status__themes">
               {statusOptions.map((status) => (
-                <div 
+                <div
                   key={status}
                   className={getStatusClasses(status)}
-                  onClick={() => handleStatusChange(status)}
-                  style={{ 
-                    cursor: isEditMode ? 'pointer' : 'default'
-                  }}
+                  onClick={() => isEditMode && setSelectedStatus(status)}
+                  style={{ cursor: isEditMode ? 'pointer' : 'default' }}
                 >
                   <p>{status}</p>
                 </div>
               ))}
             </div>
           </div>
-          
+
           <div className="pop-browse__wrap">
-            <form className="pop-browse__form form-browse" id="formBrowseCard">
+            <form className="pop-browse__form form-browse">
               <div className="form-browse__block">
-                <label htmlFor="textArea01" className="subttl">
-                  Описание задачи
-                </label>
-                <textarea 
-                  className="form-browse__area" 
-                  name="text" 
-                  id="textArea01" 
-                  placeholder="Введите описание задачи..."
+                <label htmlFor="textArea01" className="subttl">Описание задачи</label>
+                <textarea
+                  className="form-browse__area"
+                  id="textArea01"
                   value={description}
                   onChange={(e) => isEditMode && setDescription(e.target.value)}
                   readOnly={!isEditMode}
-                  style={{ 
-                    backgroundColor: isEditMode ? '#FFFFFF' : '#EAEEF6',
-                    cursor: isEditMode ? 'text' : 'default'
-                  }}
+                  disabled={isSubmitting}
                 />
               </div>
             </form>
-            
-            <ModalCalendar type="browse" date="09.09.23" />
+            <ModalCalendar type="browse" date={new Date(taskData.date).toLocaleDateString('ru-RU')} />
           </div>
-          
+
           <div className="theme-down__categories theme-down">
             <p className="categories__p subttl">Категория</p>
-            <div className={`categories__theme ${getCategoryClass(cardData.theme)} _active-category`}>
-              <p className={getCategoryClass(cardData.theme)}>{cardData.theme}</p>
+            <div className={`categories__theme ${getCategoryClass(taskData.topic)} _active-category`}>
+              <p>{taskData.topic}</p>
             </div>
           </div>
-          
+
           {!isEditMode ? (
             <div className="pop-browse__btn-browse">
               <div className="btn-group">
-                <button 
-                  className="btn-browse__edit _btn-bor _hover03"
-                  onClick={handleEdit}
-                >
-                  <span>Редактировать задачу</span>
+                <button className="btn-browse__edit _btn-bor _hover03" onClick={handleEdit} disabled={isSubmitting}>
+                  Редактировать задачу
                 </button>
-                <button 
-                  className="btn-browse__delete _btn-bor _hover03"
-                  onClick={handleDelete}
-                >
-                  <span>Удалить задачу</span>
+                <button className="btn-browse__delete _btn-bor _hover03" onClick={handleDelete} disabled={isSubmitting}>
+                  Удалить задачу
                 </button>
               </div>
-              <button 
-                className="btn-browse__close _btn-bg _hover01"
-                onClick={handleClose}
-              >
-                <span>Закрыть</span>
+              <button className="btn-browse__close _btn-bg _hover01" onClick={handleClose} disabled={isSubmitting}>
+                Закрыть
               </button>
             </div>
           ) : (
             <div className="pop-browse__btn-edit">
               <div className="btn-group">
-                <button 
-                  className="btn-edit__edit _btn-bg _hover01"
-                  onClick={handleSave}
-                >
-                  <span>Сохранить</span>
+                <button className="btn-edit__edit _btn-bg _hover01" onClick={handleSave} disabled={isSubmitting}>
+                  {isSubmitting ? 'Сохранение...' : 'Сохранить'}
                 </button>
-                <button 
-                  className="btn-edit__edit _btn-bor _hover03"
-                  onClick={handleCancel}
-                >
-                  <span>Отменить</span>
+                <button className="btn-edit__edit _btn-bor _hover03" onClick={handleCancel} disabled={isSubmitting}>
+                  Отменить
                 </button>
-                <button 
-                  className="btn-edit__delete _btn-bor _hover03"
-                  onClick={handleDelete}
-                >
-                  <span>Удалить задачу</span>
+                <button className="btn-edit__delete _btn-bor _hover03" onClick={handleDelete} disabled={isSubmitting}>
+                  Удалить задачу
                 </button>
               </div>
-              <button 
-                className="btn-edit__close _btn-bg _hover01"
-                onClick={handleClose}
-              >
-                <span>Закрыть</span>
+              <button className="btn-edit__close _btn-bg _hover01" onClick={handleClose} disabled={isSubmitting}>
+                Закрыть
               </button>
             </div>
           )}

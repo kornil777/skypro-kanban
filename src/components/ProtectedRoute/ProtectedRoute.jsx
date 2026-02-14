@@ -6,16 +6,7 @@ const ProtectedRoute = () => {
   const { isAuthenticated, loading } = useAuth();
 
   if (loading) {
-    return (
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        height: '100vh' 
-      }}>
-        <div>Загрузка...</div>
-      </div>
-    );
+    return <div>Загрузка...</div>;
   }
 
   return isAuthenticated ? <Outlet /> : <Navigate to="/login" />;

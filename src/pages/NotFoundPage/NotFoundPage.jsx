@@ -9,6 +9,7 @@ import {
 } from './NotFoundPage.styled';
 
 const NotFoundPage = () => {
+  console.log('404 page rendered, path:', window.location.pathname);
   return (
     <NotFoundContainer>
       <NotFoundContent>
