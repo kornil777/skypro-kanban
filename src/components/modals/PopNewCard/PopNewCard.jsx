@@ -11,6 +11,11 @@ const PopNewCard = () => {
   const [selectedCategory, setSelectedCategory] = useState("Research");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [selectedDate, setSelectedDate] = useState(null);
+
+  const handleDateSelect = (isoDate, formatted) => {
+    setSelectedDate(isoDate);
+  };
 
   const categories = [
     { id: "webdesign", name: "Web Design", className: "_orange" },
@@ -36,10 +41,11 @@ const PopNewCard = () => {
     setError("");
 
     try {
+      const dateToSend = selectedDate || new Date().toISOString();
       const taskData = {
         topic: selectedCategory,
         status: "Без статуса",
-        date: new Date().toISOString(),
+        date: dateToSend,
       };
       if (title.trim()) taskData.title = title.trim();
       if (description.trim()) taskData.description = description.trim();
@@ -129,7 +135,11 @@ const PopNewCard = () => {
               </div>
             </form>
 
-            <ModalCalendar type="new" />
+            <ModalCalendar
+              selectedDate={selectedDate}
+              onDateSelect={handleDateSelect}
+              type="new"
+            />
           </div>
 
           <div className="pop-new-card__categories categories">
