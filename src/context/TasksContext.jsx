@@ -64,20 +64,25 @@ export const TasksProvider = ({ children }) => {
     }
   };
 
-  const getTaskById = async (id) => {
-    try {
-      // Можно использовать данные из состояния, если они уже загружены
-      const taskFromState = tasks.find(t => t._id === id);
-      if (taskFromState) return taskFromState;
-      
-      // Иначе запросить с сервера
-      const task = await tasksAPI.getTaskById(id);
-      return task;
-    } catch (err) {
-      setError('Не удалось загрузить задачу');
+  const getTaskById = async (id, options = {}) => {
+  // Сначала ищем задачу в уже загруженном списке
+  const existingTask = tasks.find(task => task._id === id);
+  if (existingTask) {
+    return existingTask;
+  }
+
+  // Если не нашли, запрашиваем с сервера
+  try {
+    const task = await tasksAPI.getTaskById(id, options);
+    return task;
+  } catch (err) {
+    if (err.response?.status === 404) {
+      // Задачи нет на сервере — возвращаем null
       return null;
     }
-  };
+    throw err;
+  }
+};
 
   const value = {
     tasks,

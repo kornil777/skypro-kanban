@@ -16,46 +16,59 @@ const PopBrowse = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
   const isMounted = useRef(true);
+  const isDeleted = useRef(false);
 
   useEffect(() => {
-  const controller = new AbortController();
-  const signal = controller.signal;
-  isMounted.current = true;
-  document.body.classList.add('modal-open');
+  const abortController = new AbortController();
+  let isActive = true;
 
   const loadTask = async () => {
     try {
-      const task = await getTaskById(id, signal);
-      if (!isMounted.current) return;
+      const task = await getTaskById(id, { signal: abortController.signal });
+      if (!isActive) return;
+
       if (task) {
         setTaskData(task);
         setDescription(task.description || '');
         setSelectedStatus(task.status || 'Без статуса');
         setOriginalStatus(task.status || 'Без статуса');
       } else {
+        // Задача не найдена (404) — перенаправляем на главную
         navigate('/');
       }
     } catch (err) {
-      if (err.name === 'AbortError' || err.code === 'ERR_CANCELED') {
-        console.log('Запрос отменён');
-        return;
-      }
-      if (!isMounted.current) return;
+      if (err.name === 'AbortError' || !isActive) return;
       console.error('Error loading task:', err);
       setError('Не удалось загрузить задачу');
     } finally {
-      if (isMounted.current) setIsLoading(false);
+      if (isActive) setIsLoading(false);
     }
   };
 
   loadTask();
 
   return () => {
-    isMounted.current = false;
-    controller.abort(); // отменяем запрос при размонтировании
-    document.body.classList.remove('modal-open');
+    isActive = false;
+    abortController.abort();
   };
 }, [id, getTaskById, navigate]);
+
+const handleDelete = async () => {
+  if (!window.confirm('Вы уверены?')) return;
+  setIsSubmitting(true);
+  try {
+    const success = await deleteTask(id);
+    if (success) {
+      navigate('/', { replace: true });
+    } else {
+      setError('Ошибка при удалении');
+    }
+  } catch (err) {
+    setError('Не удалось удалить задачу');
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   const handleClose = () => {
     navigate(-1);
@@ -98,26 +111,7 @@ const PopBrowse = () => {
     setDescription(taskData?.description || '');
   };
 
-  const handleDelete = async () => {
-    if (!window.confirm('Вы уверены, что хотите удалить эту задачу?')) return;
-    setIsSubmitting(true);
-    setError('');
-    try {
-      const success = await deleteTask(id);
-      if (success) {
-        // Важно: сначала закрываем модалку, потом переходим на главную
-        // Замена записи в истории, чтобы нельзя было вернуться назад к удалённой задаче
-        navigate('/', { replace: true });
-      } else {
-        setError('Ошибка при удалении');
-      }
-    } catch (err) {
-      console.error('Delete error:', err);
-      setError(err.response?.data?.error || 'Не удалось удалить задачу');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+ 
 
   const statusOptions = ['Без статуса', 'Нужно сделать', 'В работе', 'Тестирование', 'Готово'];
 
