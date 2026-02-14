@@ -8,7 +8,6 @@ import PopExit from '../../components/modals/PopExit/PopExit';
 
 const MainPage = () => {
   const location = useLocation();
-  console.log('MainPage rendered, path:', location.pathname);
   const showModal = location.pathname !== '/';
 
   return (
