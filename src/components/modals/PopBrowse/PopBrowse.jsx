@@ -1,78 +1,66 @@
-import React, { useState, useEffect, useRef } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { useTasks } from "../../../context/TasksContext";
-import ModalCalendar from "../ModalCalendar/ModalCalendar";
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useTasks } from '../../../context/TasksContext';
+import ModalCalendar from '../ModalCalendar/ModalCalendar';
 
 const PopBrowse = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { getTaskById, updateTask, deleteTask } = useTasks();
   const [isEditMode, setIsEditMode] = useState(false);
-  const [description, setDescription] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState("");
+  const [description, setDescription] = useState('');
+  const [selectedStatus, setSelectedStatus] = useState('');
   const [taskData, setTaskData] = useState(null);
-  const [originalStatus, setOriginalStatus] = useState("");
+  const [originalStatus, setOriginalStatus] = useState('');
+  const [selectedDate, setSelectedDate] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState("");
-  const isMounted = useRef(true);
-  const isDeleted = useRef(false);
-  const [selectedDate, setSelectedDate] = useState(null);
-  
+  const [error, setError] = useState('');
+
+  const abortControllerRef = useRef(null);
+  const isDeletingRef = useRef(false);
+  const isMountedRef = useRef(true);
+
   useEffect(() => {
-    const abortController = new AbortController();
-    let isActive = true;
+    isMountedRef.current = true;
+    document.body.classList.add('modal-open');
 
     const loadTask = async () => {
+      abortControllerRef.current = new AbortController();
       try {
-        const task = await getTaskById(id, { signal: abortController.signal });
-
-        if (!isActive) return;
+        const task = await getTaskById(id, { signal: abortControllerRef.current.signal });
+        if (!isMountedRef.current || isDeletingRef.current) return;
 
         if (task) {
           setTaskData(task);
-          setDescription(task.description || "");
-          setSelectedStatus(task.status || "Без статуса");
-          setOriginalStatus(task.status || "Без статуса");
-          setSelectedDate(task.date); // сохраняем дату
+          setDescription(task.description || '');
+          setSelectedStatus(task.status || 'Без статуса');
+          setOriginalStatus(task.status || 'Без статуса');
+          setSelectedDate(task.date);
         } else {
-          // Задача не найдена (404) — перенаправляем на главную
-          navigate("/");
+          navigate('/');
         }
       } catch (err) {
-        if (err.name === "AbortError" || !isActive) return;
-        console.error("Error loading task:", err);
-        setError("Не удалось загрузить задачу");
+        if (err.name === 'AbortError' || !isMountedRef.current || isDeletingRef.current) return;
+        console.error('Error loading task:', err);
+        setError('Не удалось загрузить задачу');
       } finally {
-        if (isActive) setIsLoading(false);
+        if (isMountedRef.current && !isDeletingRef.current) {
+          setIsLoading(false);
+        }
       }
     };
-    
 
     loadTask();
 
     return () => {
-      isActive = false;
-      abortController.abort();
+      isMountedRef.current = false;
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+      document.body.classList.remove('modal-open');
     };
   }, [id, getTaskById, navigate]);
-
-  const handleDelete = async () => {
-    if (!window.confirm("Вы уверены?")) return;
-    setIsSubmitting(true);
-    try {
-      const success = await deleteTask(id);
-      if (success) {
-        navigate("/", { replace: true });
-      } else {
-        setError("Ошибка при удалении");
-      }
-    } catch (err) {
-      setError("Не удалось удалить задачу");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   const handleClose = () => {
     navigate(-1);
@@ -83,15 +71,10 @@ const PopBrowse = () => {
   };
 
   const handleEdit = () => setIsEditMode(true);
-  const handleDateSelect = (isoDate, formatted) => {
-      if (isEditMode) {
-        setSelectedDate(isoDate);
-      }
-    };
 
   const handleSave = async () => {
     setIsSubmitting(true);
-    setError("");
+    setError('');
     try {
       const updatedData = {
         title: taskData.title,
@@ -105,10 +88,10 @@ const PopBrowse = () => {
         setOriginalStatus(selectedStatus);
         setIsEditMode(false);
       } else {
-        setError("Ошибка при сохранении");
+        setError('Ошибка при сохранении');
       }
     } catch (err) {
-      setError("Не удалось сохранить изменения");
+      setError('Не удалось сохранить изменения');
     } finally {
       setIsSubmitting(false);
     }
@@ -117,24 +100,52 @@ const PopBrowse = () => {
   const handleCancel = () => {
     setIsEditMode(false);
     setSelectedStatus(originalStatus);
-    setDescription(taskData?.description || "");
+    setDescription(taskData?.description || '');
+    setSelectedDate(taskData?.date);
   };
 
-  const statusOptions = [
-    "Без статуса",
-    "Нужно сделать",
-    "В работе",
-    "Тестирование",
-    "Готово",
-  ];
+  const handleDelete = async () => {
+    if (!window.confirm('Вы уверены, что хотите удалить эту задачу?')) return;
+
+    // Помечаем, что началось удаление, и отменяем текущий запрос
+    isDeletingRef.current = true;
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
+    setIsSubmitting(true);
+    setError('');
+    try {
+      const success = await deleteTask(id);
+      if (success) {
+        // Переходим на главную, компонент размонтируется
+        navigate('/', { replace: true });
+      } else {
+        setError('Ошибка при удалении');
+        isDeletingRef.current = false; // разрешаем новые запросы, если не удалили
+      }
+    } catch (err) {
+      console.error('Delete error:', err);
+      setError(err.response?.data?.error || 'Не удалось удалить задачу');
+      isDeletingRef.current = false;
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDateSelect = (isoDate, formatted) => {
+    if (isEditMode) {
+      setSelectedDate(isoDate);
+    }
+  };
+
+  const statusOptions = ['Без статуса', 'Нужно сделать', 'В работе', 'Тестирование', 'Готово'];
 
   if (isLoading) {
     return (
       <div className="popup-overlay" onClick={handleOverlayClick}>
         <div className="popup-container pop-browse">
-          <div style={{ textAlign: "center", padding: "40px" }}>
-            Загрузка...
-          </div>
+          <div style={{ textAlign: 'center', padding: '40px' }}>Загрузка...</div>
         </div>
       </div>
     );
@@ -144,9 +155,7 @@ const PopBrowse = () => {
     return (
       <div className="popup-overlay" onClick={handleOverlayClick}>
         <div className="popup-container pop-browse">
-          <div style={{ textAlign: "center", padding: "40px" }}>
-            Задача не найдена
-          </div>
+          <div style={{ textAlign: 'center', padding: '40px' }}>Задача не найдена</div>
         </div>
       </div>
     );
@@ -154,41 +163,33 @@ const PopBrowse = () => {
 
   const getCategoryClass = (category) => {
     switch (category) {
-      case "Web Design":
-        return "_orange";
-      case "Research":
-        return "_green";
-      case "Copywriting":
-        return "_purple";
-      default:
-        return "_gray";
+      case 'Web Design': return '_orange';
+      case 'Research': return '_green';
+      case 'Copywriting': return '_purple';
+      default: return '_gray';
     }
   };
 
   const getStatusClasses = (status) => {
-    if (isEditMode) {
-      return status === selectedStatus
-        ? "status__theme edit-mode edit-selected"
-        : "status__theme edit-mode edit-unselected";
-    } else {
-      return status === selectedStatus
-        ? `status__theme view-mode ${getCategoryClass(taskData.topic)}`
-        : "status__theme _hide";
-    }
-  };
+  if (isEditMode) {
+    return status === selectedStatus
+      ? 'status__theme status-edit-selected'
+      : 'status__theme status-edit-unselected';
+  } else {
+    return status === selectedStatus
+      ? 'status__theme status-view'
+      : 'status__theme _hide';
+  }
+};
 
   return (
     <div className="popup-overlay" onClick={handleOverlayClick}>
       <div className="popup-container pop-browse">
         <div className="pop-browse__content">
-          {error && (
-            <div style={{ color: "red", marginBottom: "15px" }}>{error}</div>
-          )}
+          {error && <div style={{ color: 'red', marginBottom: '15px' }}>{error}</div>}
           <div className="pop-browse__top-block">
             <h3 className="pop-browse__ttl">{taskData.title}</h3>
-            <div
-              className={`categories__theme theme-top ${getCategoryClass(taskData.topic)} _active-category`}
-            >
+            <div className={`categories__theme theme-top ${getCategoryClass(taskData.topic)} _active-category`}>
               <p>{taskData.topic}</p>
             </div>
           </div>
@@ -201,7 +202,7 @@ const PopBrowse = () => {
                   key={status}
                   className={getStatusClasses(status)}
                   onClick={() => isEditMode && setSelectedStatus(status)}
-                  style={{ cursor: isEditMode ? "pointer" : "default" }}
+                  style={{ cursor: isEditMode ? 'pointer' : 'default' }}
                 >
                   <p>{status}</p>
                 </div>
@@ -212,9 +213,7 @@ const PopBrowse = () => {
           <div className="pop-browse__wrap">
             <form className="pop-browse__form form-browse">
               <div className="form-browse__block">
-                <label htmlFor="textArea01" className="subttl">
-                  Описание задачи
-                </label>
+                <label htmlFor="textArea01" className="subttl">Описание задачи</label>
                 <textarea
                   className="form-browse__area"
                   id="textArea01"
@@ -234,9 +233,7 @@ const PopBrowse = () => {
 
           <div className="theme-down__categories theme-down">
             <p className="categories__p subttl">Категория</p>
-            <div
-              className={`categories__theme ${getCategoryClass(taskData.topic)} _active-category`}
-            >
+            <div className={`categories__theme ${getCategoryClass(taskData.topic)} _active-category`}>
               <p>{taskData.topic}</p>
             </div>
           </div>
@@ -275,7 +272,7 @@ const PopBrowse = () => {
                   onClick={handleSave}
                   disabled={isSubmitting}
                 >
-                  {isSubmitting ? "Сохранение..." : "Сохранить"}
+                  {isSubmitting ? 'Сохранение...' : 'Сохранить'}
                 </button>
                 <button
                   className="btn-edit__edit _btn-bor _hover03"

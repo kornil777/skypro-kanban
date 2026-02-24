@@ -58,8 +58,8 @@ export const tasksAPI = {
     return response.data.tasks;
   },
   getTaskById: async (id, options = {}) => {
-    const response = await tasksClient.get(`/${id}`, { signal: options.signal });
-    return response.data.task;
+  const response = await tasksClient.get(`/${id}`, { signal: options.signal });
+  return response.data.task;
   },
   createTask: async (taskData) => {
     const response = await tasksClient.post('/', taskData);

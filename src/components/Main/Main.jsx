@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import { useLocation } from "react-router-dom";
 import { useTasks } from "../../context/TasksContext";
 import ColumnComponent from "../Column/Column.jsx";
 import {
@@ -16,13 +15,11 @@ import {
 } from "./Main.styled.js";
 
 function Main() {
-  const location = useLocation();
   const { tasks, loading, error, loadTasks } = useTasks();
 
   useEffect(() => {
-    // Загружаем задачи при монтировании и при изменении пути (например, после возврата с модалки)
-    loadTasks();
-  }, [location.pathname, loadTasks]);
+    loadTasks(); // загружаем задачи только при монтировании
+  }, [loadTasks]); // убрали location.pathname
 
   // Группируем карточки по статусам
   const groupedTasks = tasks.reduce((groups, task) => {
@@ -48,7 +45,7 @@ function Main() {
     "Готово",
   ];
 
-  if (loading) {
+  if (loading && tasks.length === 0) {
     return (
       <MainContainer>
         <Container>

@@ -326,20 +326,55 @@ export const ModalStyles = createGlobalStyle`
   }
 
   .status__theme {
-    border-radius: 24px;
-    border: 0.7px solid rgba(148, 166, 190, 0.4);
-    color: #94A6BE;
-    padding: 11px 14px 10px;
-    margin-right: 7px;
-    margin-bottom: 7px;
-    cursor: pointer;
-  }
+  border-radius: 24px;
+  padding: 11px 14px 10px;
+  margin-right: 7px;
+  margin-bottom: 7px;
+  display: inline-block;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  line-height: 1;
+  letter-spacing: -0.14px;
+  cursor: pointer;
+  border: 0.7px solid transparent;
+}
+ .status-view {
+  background-color: #94A6BE !important;
+  color: #FFFFFF !important;
+  border-color: #94A6BE !important;
+}
+
+/* Режим редактирования: выбранный статус */
+.status-edit-selected {
+  background-color: #94A6BE !important;
+  color: #FFFFFF !important;
+  border-color: #94A6BE !important;
+}
+
+/* Режим редактирования: невыбранный статус */
+.status-edit-unselected {
+  background-color: #FFFFFF !important;
+  color: #94A6BE !important;
+  
+}
+
+.status-edit-unselected:hover {
+  background-color: #F5F5F5 !important;
+  border-color: #333333 !important;
+}
+
+/* Скрытые статусы */
+._hide {
+  display: none !important;
+}
 
   .status__theme p {
     font-size: 14px;
     line-height: 1;
     letter-spacing: -0.14px;
   }
+
+  
 
   /* Стили для PopExit (выход) */
   .pop-exit {
@@ -733,6 +768,8 @@ export const ModalStyles = createGlobalStyle`
   .calendar__cell._cell-day:hover {
     background-color: #EAEEF6 !important;
   }
+
+  
 
   /* Адаптивность для статусов */
   @media (max-width: 660px) {
