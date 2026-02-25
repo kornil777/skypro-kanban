@@ -22,45 +22,51 @@ const PopBrowse = () => {
   const isMountedRef = useRef(true);
 
   useEffect(() => {
-    isMountedRef.current = true;
+
+  if (isDeletingRef.current) {
     document.body.classList.add('modal-open');
-
-    const loadTask = async () => {
-      abortControllerRef.current = new AbortController();
-      try {
-        const task = await getTaskById(id, { signal: abortControllerRef.current.signal });
-        if (!isMountedRef.current || isDeletingRef.current) return;
-
-        if (task) {
-          setTaskData(task);
-          setDescription(task.description || '');
-          setSelectedStatus(task.status || 'Без статуса');
-          setOriginalStatus(task.status || 'Без статуса');
-          setSelectedDate(task.date);
-        } else {
-          navigate('/');
-        }
-      } catch (err) {
-        if (err.name === 'AbortError' || !isMountedRef.current || isDeletingRef.current) return;
-        console.error('Error loading task:', err);
-        setError('Не удалось загрузить задачу');
-      } finally {
-        if (isMountedRef.current && !isDeletingRef.current) {
-          setIsLoading(false);
-        }
-      }
-    };
-
-    loadTask();
-
     return () => {
-      isMountedRef.current = false;
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-      }
       document.body.classList.remove('modal-open');
     };
-  }, [id, getTaskById, navigate]);
+  }
+
+  const abortController = new AbortController();
+  let isActive = true;
+
+  const loadTask = async () => {
+    try {
+      const task = await getTaskById(id, { signal: abortController.signal });
+      if (!isActive || isDeletingRef.current) return;
+
+      if (task) {
+        setTaskData(task);
+        setDescription(task.description || '');
+        setSelectedStatus(task.status || 'Без статуса');
+        setOriginalStatus(task.status || 'Без статуса');
+        setSelectedDate(task.date);
+      } else {
+        navigate('/');
+      }
+    } catch (err) {
+      if (err.name === 'AbortError' || !isActive || isDeletingRef.current) return;
+      console.error('Error loading task:', err);
+      setError('Не удалось загрузить задачу');
+    } finally {
+      if (isActive && !isDeletingRef.current) {
+        setIsLoading(false);
+      }
+    }
+  };
+
+  document.body.classList.add('modal-open');
+  loadTask();
+
+  return () => {
+    isActive = false;
+    abortController.abort();
+    document.body.classList.remove('modal-open');
+  };
+}, [id, getTaskById, navigate]); 
 
   const handleClose = () => {
     navigate(-1);

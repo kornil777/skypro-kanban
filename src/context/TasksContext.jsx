@@ -64,7 +64,7 @@ export const TasksProvider = ({ children }) => {
     }
   };
 
-  const getTaskById = async (id, options = {}) => {
+  const getTaskById = useCallback(async (id, options) => {
   // Сначала ищем задачу в уже загруженном списке
   const existingTask = tasks.find(task => task._id === id);
   if (existingTask) {
@@ -82,7 +82,7 @@ export const TasksProvider = ({ children }) => {
     }
     throw err;
   }
-};
+}, [tasks]);
 
   const value = {
     tasks,
