@@ -52,6 +52,12 @@ export const HeaderButton = styled.button`
   &:hover {
     background-color: ${({ theme }) => theme.colors.primaryHover};
   }
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
+    width: 140px;
+    font-size: 12px;
+    margin-right: 10px;
+  }
 `;
 
 export const HeaderUser = styled.div`
@@ -85,29 +91,90 @@ export const HeaderUser = styled.div`
 
 export const UserMenu = styled.div`
   position: absolute;
-  top: 50px;
+  top: 61px;
   right: 0;
-  width: 200px;
-  background: ${({ theme }) => theme.colors.backgroundLight};
-  border-radius: ${({ theme }) => theme.sizes.borderRadius.medium};
-  border: 0.7px solid ${({ theme }) => theme.colors.borderLight};
-  box-shadow: ${({ theme }) => theme.colors.shadow};
-  padding: 15px;
-  z-index: 1000;
+  width: 213px;
+  height: 205px;
+  border-radius: 10px;
+  border: 0.7px solid rgba(148, 166, 190, 0.4);
+  background: #fff;
+  box-shadow: 0px 10px 39px 0px rgba(26, 56, 101, 0.21);
+  padding: 34px;
+  text-align: center;
+  z-index: 2;
 `;
 
-export const UserMenuItem = styled.div`
-  padding: 10px 0;
-  color: ${({ theme }) => theme.colors.textPrimary};
+export const UserMenuName = styled.p`
   font-size: ${({ theme }) => theme.fonts.sizes.md};
-  cursor: pointer;
-  border-bottom: 1px solid ${({ theme }) => theme.colors.borderLight};
+  font-weight: ${({ theme }) => theme.fonts.weights.medium};
+  color: ${({ theme }) => theme.colors.textPrimary};
+  margin-bottom: 4px;
+  width: 100%;
+`;
 
-  &:last-child {
-    border-bottom: none;
+export const UserMenuEmail = styled.p`
+  font-size: ${({ theme }) => theme.fonts.sizes.sm};
+  color: ${({ theme }) => theme.colors.textSecondary};
+  margin-bottom: 15px;
+  width: 100%;
+`;
+
+export const UserMenuTheme = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 20px;
+`;
+
+export const UserMenuThemeLabel = styled.span`
+  font-size: ${({ theme }) => theme.fonts.sizes.md};
+  color: ${({ theme }) => theme.colors.textPrimary};
+`;
+
+export const UserMenuThemeCheckbox = styled.input`
+  position: relative;
+  width: 36px;
+  height: 20px;
+  border-radius: 20px;
+  background: ${({ theme }) => theme.colors.backgroundGray};
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: ${({ theme }) => theme.colors.primary};
+    transition: transform 0.3s;
   }
 
+  &:checked::before {
+    transform: translateX(16px);
+  }
+`;
+
+export const UserMenuLogoutButton = styled.button`
+  width: 100%;
+  height: 30px;
+  background-color: transparent;
+  border: 1px solid ${({ theme }) => theme.colors.primary};
+  border-radius: ${({ theme }) => theme.sizes.borderRadius.small};
+  color: ${({ theme }) => theme.colors.primary};
+  font-size: ${({ theme }) => theme.fonts.sizes.md};
+  font-weight: ${({ theme }) => theme.fonts.weights.medium};
+  cursor: pointer;
+  transition: all ${({ theme }) => theme.animations.transition};
+  margin-top: 10px;
+
   &:hover {
-    color: ${({ theme }) => theme.colors.primary};
+    background-color: ${({ theme }) => theme.colors.primary};
+    color: ${({ theme }) => theme.colors.textLight};
   }
 `;
