@@ -3,6 +3,7 @@ import { useDrop } from 'react-dnd';
 import { ItemTypes } from '../../constants/dndTypes';
 import { useTasks } from '../../context/TasksContext';
 import Card from '../Card/Card';
+import SkeletonCard from '../SkeletonCard/SkeletonCard';
 import {
   ColumnContainer,
   ColumnTitle,
@@ -10,7 +11,7 @@ import {
   CardsContainer
 } from './Column.styled';
 
-function Column({ title, cards }) {
+function Column({ title, cards, isLoading }) {
   const { updateTask } = useTasks();
 
   const [{ isOver }, dropRef] = useDrop(() => ({
@@ -35,17 +36,26 @@ function Column({ title, cards }) {
         <ColumnTitleText>{title}</ColumnTitleText>
       </ColumnTitle>
       <CardsContainer>
-        {cards.map((card) => (
-          <Card
-            key={card.id}
-            id={card.id}
-            title={card.title}
-            category={card.theme}
-            date={card.date}
-            status={card.status}
-            description={card.description}
-          />
-        ))}
+        {isLoading ? (
+          // Показываем 3 скелетона для имитации загрузки
+          <>
+            <SkeletonCard />
+            <SkeletonCard />
+            <SkeletonCard />
+          </>
+        ) : (
+          cards.map((card) => (
+            <Card
+              key={card.id}
+              id={card.id}
+              title={card.title}
+              category={card.theme}
+              date={card.date}
+              status={card.status}
+              description={card.description}
+            />
+          ))
+        )}
       </CardsContainer>
     </ColumnContainer>
   );

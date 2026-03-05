@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useTasks } from "../../context/TasksContext";
 import ColumnComponent from "../Column/Column.jsx";
+import SkeletonCard from "../SkeletonCard/SkeletonCard";
 import {
   MainContainer,
   MainBlock,
@@ -12,7 +13,11 @@ import {
   ErrorText,
   RetryButton,
   Container,
-  EmptyBoardMessage, // добавим новый стилизованный компонент
+  EmptyBoardMessage,
+  Column,
+  ColumnTitle,
+  ColumnTitleText,
+  CardsContainer,
 } from "./Main.styled.js";
 
 function Main() {
@@ -22,7 +27,6 @@ function Main() {
     loadTasks();
   }, [loadTasks]);
 
-  // Группируем карточки по статусам
   const groupedTasks = tasks.reduce((groups, task) => {
     if (!groups[task.status]) {
       groups[task.status] = [];
@@ -31,7 +35,7 @@ function Main() {
       id: task._id,
       title: task.title,
       theme: task.topic,
-      date: task.date, // исходная ISO-дата
+      date: task.date,
       status: task.status,
       description: task.description,
     });
@@ -45,21 +49,6 @@ function Main() {
     "Тестирование",
     "Готово",
   ];
-
-  if (loading && tasks.length === 0) {
-    return (
-      <MainContainer>
-        <Container>
-          <MainBlock>
-            <LoadingContainer>
-              <LoadingSpinner />
-              <LoadingText>Загрузка задач...</LoadingText>
-            </LoadingContainer>
-          </MainBlock>
-        </Container>
-      </MainContainer>
-    );
-  }
 
   if (error) {
     return (
@@ -78,8 +67,7 @@ function Main() {
     );
   }
 
-  // Если задач нет — показываем сообщение
-  if (tasks.length === 0) {
+  if (!loading && tasks.length === 0) {
     return (
       <MainContainer>
         <Container>
@@ -101,6 +89,7 @@ function Main() {
                 key={status}
                 title={status}
                 cards={groupedTasks[status] || []}
+                isLoading={loading}
               />
             ))}
           </MainContent>

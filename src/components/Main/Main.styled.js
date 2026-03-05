@@ -25,7 +25,11 @@ export const MainContent = styled.div`
     display: block;
   `)}
 `;
-
+export const CardsContainer = styled.div`
+  width: 100%;
+  display: block;
+  position: relative;
+`;
 export const Column = styled.div`
   width: 20%;
   margin: 0 auto;
