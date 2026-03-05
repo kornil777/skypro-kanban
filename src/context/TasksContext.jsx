@@ -40,17 +40,20 @@ export const TasksProvider = ({ children }) => {
     }
   };
 
-  const updateTask = async (id, taskData) => {
-    setError(null);
-    try {
-      const updatedTasks = await tasksAPI.updateTask(id, taskData);
-      setTasks(updatedTasks);
-      return true;
-    } catch (err) {
-      setError('Не удалось обновить задачу');
-      return false;
-    }
-  };
+  const updateTask = async (id, updatedFields) => {
+  const previousTasks = tasks;
+  const optimisticUpdate = tasks.map(t => t._id === id ? { ...t, ...updatedFields } : t);
+  setTasks(optimisticUpdate);
+
+  try {
+    const updatedTasks = await tasksAPI.updateTask(id, updatedFields);
+    // если сервер вернул полный список, можно использовать его
+    setTasks(updatedTasks);
+  } catch (err) {
+    setTasks(previousTasks); // откат при ошибке
+    throw err;
+  }
+};
 
   const deleteTask = async (id) => {
     setError(null);

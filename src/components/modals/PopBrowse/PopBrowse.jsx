@@ -79,29 +79,39 @@ const PopBrowse = () => {
   const handleEdit = () => setIsEditMode(true);
 
   const handleSave = async () => {
-    setIsSubmitting(true);
-    setError('');
-    try {
-      const updatedData = {
-        title: taskData.title,
-        topic: taskData.topic,
-        status: selectedStatus,
-        description,
-        date: selectedDate || taskData.date,
-      };
-      const success = await updateTask(id, updatedData);
-      if (success) {
-        setOriginalStatus(selectedStatus);
-        setIsEditMode(false);
-      } else {
-        setError('Ошибка при сохранении');
-      }
-    } catch (err) {
-      setError('Не удалось сохранить изменения');
-    } finally {
-      setIsSubmitting(false);
+  // Валидация
+  if (!taskData.title.trim()) {
+    setError('Название задачи не может быть пустым');
+    return;
+  }
+  if (!description.trim()) {
+    setError('Описание задачи не может быть пустым');
+    return;
+  }
+
+  setIsSubmitting(true);
+  setError('');
+  try {
+    const updatedData = {
+      title: taskData.title,
+      topic: taskData.topic,
+      status: selectedStatus,
+      description,
+      date: selectedDate || taskData.date,
+    };
+    const success = await updateTask(id, updatedData);
+    if (success) {
+      setOriginalStatus(selectedStatus);
+      setIsEditMode(false);
+    } else {
+      setError('Ошибка при сохранении');
     }
-  };
+  } catch (err) {
+    setError('Не удалось сохранить изменения');
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   const handleCancel = () => {
     setIsEditMode(false);

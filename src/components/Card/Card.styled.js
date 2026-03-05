@@ -75,11 +75,13 @@ export const CardBtnDot = styled.div`
 `;
 
 export const CardTitle = styled.h3`
-  font-size: 14px;
+   font-size: 14px;
   font-weight: 500;
   line-height: 18px;
   color: #000000;
   margin-bottom: 10px;
+  text-decoration: ${props => props.$isDone ? 'line-through' : 'none'};
+;
   
   a {
     color: inherit;

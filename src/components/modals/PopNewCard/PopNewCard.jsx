@@ -34,37 +34,44 @@ const PopNewCard = () => {
     navigate(-1);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+ const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    setIsSubmitting(true);
-    setError("");
+  // Валидация
+  if (!title.trim()) {
+    setError('Название задачи обязательно');
+    return;
+  }
+  if (!description.trim()) {
+    setError('Описание задачи обязательно');
+    return;
+  }
 
-    try {
-      const dateToSend = selectedDate || new Date().toISOString();
-      const taskData = {
-        topic: selectedCategory,
-        status: "Без статуса",
-        date: dateToSend,
-      };
-      if (title.trim()) taskData.title = title.trim();
-      if (description.trim()) taskData.description = description.trim();
+  setIsSubmitting(true);
+  setError('');
 
-      const success = await createTask(taskData);
-      if (success) {
-        navigate(-1);
-      } else {
-        setError("Ошибка при создании задачи");
-      }
-    } catch (err) {
-      console.error("Create task error:", err);
-      const errorMessage =
-        err.response?.data?.error || err.message || "Не удалось создать задачу";
-      setError(`Ошибка: ${errorMessage}`);
-    } finally {
-      setIsSubmitting(false);
+  try {
+    const taskData = {
+      title: title.trim(),
+      topic: selectedCategory,
+      status: 'Без статуса',
+      description: description.trim(),
+      date: selectedDate || new Date().toISOString(),
+    };
+
+    const success = await createTask(taskData);
+    if (success) {
+      navigate(-1);
+    } else {
+      setError('Ошибка при создании задачи');
     }
-  };
+  } catch (err) {
+    console.error('Create task error:', err);
+    setError(err.response?.data?.error || 'Не удалось создать задачу');
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   const handleOverlayClick = (e) => {
     if (e.target === e.currentTarget) {

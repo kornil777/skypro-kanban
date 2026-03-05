@@ -12,14 +12,15 @@ import {
   ErrorText,
   RetryButton,
   Container,
+  EmptyBoardMessage, // добавим новый стилизованный компонент
 } from "./Main.styled.js";
 
 function Main() {
   const { tasks, loading, error, loadTasks } = useTasks();
 
   useEffect(() => {
-    loadTasks(); // загружаем задачи только при монтировании
-  }, [loadTasks]); // убрали location.pathname
+    loadTasks();
+  }, [loadTasks]);
 
   // Группируем карточки по статусам
   const groupedTasks = tasks.reduce((groups, task) => {
@@ -30,7 +31,7 @@ function Main() {
       id: task._id,
       title: task.title,
       theme: task.topic,
-      date: new Date(task.date).toLocaleDateString('ru-RU'),
+      date: task.date, // исходная ISO-дата
       status: task.status,
       description: task.description,
     });
@@ -71,6 +72,19 @@ function Main() {
                 Попробовать снова
               </RetryButton>
             </ErrorContainer>
+          </MainBlock>
+        </Container>
+      </MainContainer>
+    );
+  }
+
+  // Если задач нет — показываем сообщение
+  if (tasks.length === 0) {
+    return (
+      <MainContainer>
+        <Container>
+          <MainBlock>
+            <EmptyBoardMessage>Новых задач нет</EmptyBoardMessage>
           </MainBlock>
         </Container>
       </MainContainer>

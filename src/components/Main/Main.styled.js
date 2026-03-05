@@ -143,3 +143,17 @@ export const Container = styled.div`
     padding: 0 16px;
   `)}
 `;
+export const EmptyBoardMessage = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  background-color: ${({ theme }) => theme.colors.backgroundLight};
+  border-radius: ${({ theme }) => theme.sizes.borderRadius.large};
+  padding: 40px;
+  text-align: center;
+  color: ${({ theme }) => theme.colors.textSecondary};
+  font-size: ${({ theme }) => theme.fonts.sizes.xl};
+  font-weight: ${({ theme }) => theme.fonts.weights.medium};
+  border: 2px dashed ${({ theme }) => theme.colors.borderLight};
+`;
