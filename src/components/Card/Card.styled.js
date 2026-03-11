@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 export const CardsItem = styled.div`
   padding: 5px;
@@ -10,7 +10,7 @@ export const CardsItem = styled.div`
 export const CardsCard = styled.div`
   width: 220px;
   height: 130px;
-  background-color: #FFFFFF;
+  background-color: ${({ theme }) => theme.colors.backgroundLight};
   border-radius: 10px;
   display: flex;
   flex-direction: column;
@@ -33,20 +33,32 @@ export const CardTheme = styled.div`
   height: 20px;
   padding: 5px 14px;
   border-radius: 18px;
-  background-color: ${props => {
-    switch(props.$category) {  // Используем $ префикс
-      case 'Web Design': return '#FFE4C2';
-      case 'Research': return '#B4FDD1';
-      case 'Copywriting': return '#E9D4FF';
-      default: return '#94A6BE';
+  background-color: ${(props) => {
+    switch (
+      props.$category // Используем $ префикс
+    ) {
+      case "Web Design":
+        return "#FFE4C2";
+      case "Research":
+        return "#B4FDD1";
+      case "Copywriting":
+        return "#E9D4FF";
+      default:
+        return "#94A6BE";
     }
   }};
-  color: ${props => {
-    switch(props.$category) {  // Используем $ префикс
-      case 'Web Design': return '#FF6D00';
-      case 'Research': return '#06B16E';
-      case 'Copywriting': return '#9A48F1';
-      default: return '#FFFFFF';
+  color: ${(props) => {
+    switch (
+      props.$category // Используем $ префикс
+    ) {
+      case "Web Design":
+        return "#FF6D00";
+      case "Research":
+        return "#06B16E";
+      case "Copywriting":
+        return "#9A48F1";
+      default:
+        return "#FFFFFF";
     }
   }};
 `;
@@ -71,24 +83,22 @@ export const CardBtnDot = styled.div`
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background-color: #94A6BE;
+  background-color: #94a6be;
 `;
 
 export const CardTitle = styled.h3`
-   font-size: 14px;
+  font-size: 14px;
   font-weight: 500;
   line-height: 18px;
-  color: #000000;
+  color: ${({ theme }) => theme.colors.textPrimary};
   margin-bottom: 10px;
-  text-decoration: ${props => props.$isDone ? 'line-through' : 'none'};
-;
-  
+  text-decoration: ${(props) => (props.$isDone ? "line-through" : "none")};
   a {
     color: inherit;
     text-decoration: none;
-    
+
     &:hover {
-      color: #565EEF;
+      color: #565eef;
     }
   }
 `;
@@ -105,12 +115,12 @@ export const CardDate = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  
+
   svg {
     width: 13px;
-    
+
     path {
-      stroke: #94A6BE;
+      stroke: #94a6be;
     }
   }
 `;
@@ -119,7 +129,7 @@ export const CardDateText = styled.p`
   margin-left: 6px;
   font-size: 10px;
   line-height: 13px;
-  color: #94A6BE;
+  color: ${({ theme }) => theme.colors.textSecondary};
   letter-spacing: 0.2px;
 `;
 

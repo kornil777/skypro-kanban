@@ -96,9 +96,9 @@ export const UserMenu = styled.div`
   width: 213px;
   height: 205px;
   border-radius: 10px;
-  border: 0.7px solid rgba(148, 166, 190, 0.4);
-  background: #fff;
-  box-shadow: 0px 10px 39px 0px rgba(26, 56, 101, 0.21);
+  background: ${({ theme }) => theme.colors.backgroundLight};
+  border-color: ${({ theme }) => theme.colors.borderLight};
+  box-shadow: ${({ theme }) => theme.colors.shadow};
   padding: 34px;
   text-align: center;
   z-index: 2;
@@ -137,7 +137,7 @@ export const UserMenuThemeCheckbox = styled.input`
   width: 36px;
   height: 20px;
   border-radius: 20px;
-  background: ${({ theme }) => theme.colors.backgroundGray};
+  background: ${({ theme }) => theme.colors.checkboxBackground};
   outline: none;
   -webkit-appearance: none;
   appearance: none;
@@ -151,7 +151,7 @@ export const UserMenuThemeCheckbox = styled.input`
     width: 16px;
     height: 16px;
     border-radius: 50%;
-    background-color: ${({ theme }) => theme.colors.primary};
+    background-color: ${({ theme }) => theme.colors.primary}; 
     transition: transform 0.3s;
   }
 
@@ -164,9 +164,9 @@ export const UserMenuLogoutButton = styled.button`
   width: 100%;
   height: 30px;
   background-color: transparent;
-  border: 1px solid ${({ theme }) => theme.colors.primary};
+  border: 1px solid ${({ theme }) => theme.colors.logoutButtonColor};
   border-radius: ${({ theme }) => theme.sizes.borderRadius.small};
-  color: ${({ theme }) => theme.colors.primary};
+  color: ${({ theme }) => theme.colors.logoutButtonColor};
   font-size: ${({ theme }) => theme.fonts.sizes.md};
   font-weight: ${({ theme }) => theme.fonts.weights.medium};
   cursor: pointer;
@@ -174,7 +174,7 @@ export const UserMenuLogoutButton = styled.button`
   margin-top: 10px;
 
   &:hover {
-    background-color: ${({ theme }) => theme.colors.primary};
-    color: ${({ theme }) => theme.colors.textLight};
+    background-color: ${({ theme }) => theme.colors.primary};  
+    color: ${({ theme }) => theme.colors.textLight}; 
   }
 `;

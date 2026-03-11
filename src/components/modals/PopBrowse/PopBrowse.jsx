@@ -103,9 +103,7 @@ const PopBrowse = () => {
     if (success) {
       setOriginalStatus(selectedStatus);
       setIsEditMode(false);
-    } else {
-      setError('Ошибка при сохранении');
-    }
+    } 
   } catch (err) {
     setError('Не удалось сохранить изменения');
   } finally {

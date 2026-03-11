@@ -8,7 +8,7 @@ const spin = keyframes`
 
 export const MainContainer = styled.main`
   width: 100%;
-  background-color: ${({ theme }) => theme.colors.backgroundGray};
+   background-color: ${({ theme }) => theme.colors.backgroundMain};
 `;
 
 export const MainBlock = styled.div`

@@ -1,5 +1,6 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
+import styled from "styled-components";
 
 const pulse = keyframes`
   0% {
@@ -16,7 +17,7 @@ const pulse = keyframes`
 const SkeletonCardContainer = styled.div`
   width: 220px;
   height: 130px;
-  background-color: #fff;
+  background-color: ${({ theme }) => theme.colors.backgroundLight};
   border-radius: 10px;
   padding: 15px 13px 19px;
   margin-bottom: 10px;

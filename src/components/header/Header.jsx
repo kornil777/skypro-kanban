@@ -1,6 +1,8 @@
+// Header.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 import {
   HeaderContainer,
   HeaderBlock,
@@ -17,27 +19,15 @@ import {
 } from './Header.styled';
 
 function Header() {
+  
   const { user } = useAuth();
+  const { isDark, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [showMenu, setShowMenu] = useState(false);
-  const [isDarkTheme, setIsDarkTheme] = useState(false);
 
-  const handleNewCardClick = () => {
-    navigate('/new');
-  };
-
-  const handleExitClick = () => {
-    navigate('/exit');
-  };
-
-  const toggleMenu = () => {
-    setShowMenu(!showMenu);
-  };
-
-  const handleThemeToggle = (e) => {
-    setIsDarkTheme(e.target.checked);
-    // здесь будет логика переключения темы
-  };
+  const handleNewCardClick = () => navigate('/new');
+  const handleExitClick = () => navigate('/exit');
+  const toggleMenu = () => setShowMenu(!showMenu);
 
   return (
     <HeaderContainer>
@@ -45,7 +35,11 @@ function Header() {
         <HeaderBlock>
           <HeaderLogo>
             <a href="/" target="_self">
-              <img src="/images/logo.png" alt="logo" />
+              {isDark ? (
+                <img src="/images/logo_dark.png" alt="logo" />
+              ) : (
+                <img src="/images/logo.png" alt="logo" />
+              )}
             </a>
           </HeaderLogo>
           <HeaderNav>
@@ -63,8 +57,8 @@ function Header() {
                   <p>Темная тема</p>
                   <UserMenuThemeCheckbox
                     type="checkbox"
-                    checked={isDarkTheme}
-                    onChange={handleThemeToggle}
+                    checked={isDark}
+                    onChange={toggleTheme}
                   />
                 </UserMenuTheme>
                 <UserMenuLogoutButton className="_btn-bor _hover03" onClick={handleExitClick}>
