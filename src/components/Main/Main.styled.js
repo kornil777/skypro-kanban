@@ -8,7 +8,7 @@ const spin = keyframes`
 
 export const MainContainer = styled.main`
   width: 100%;
-  background-color: ${({ theme }) => theme.colors.backgroundGray};
+   background-color: ${({ theme }) => theme.colors.backgroundMain};
 `;
 
 export const MainBlock = styled.div`
@@ -25,7 +25,11 @@ export const MainContent = styled.div`
     display: block;
   `)}
 `;
-
+export const CardsContainer = styled.div`
+  width: 100%;
+  display: block;
+  position: relative;
+`;
 export const Column = styled.div`
   width: 20%;
   margin: 0 auto;
@@ -142,4 +146,18 @@ export const Container = styled.div`
     width: 100%;
     padding: 0 16px;
   `)}
+`;
+export const EmptyBoardMessage = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  background-color: ${({ theme }) => theme.colors.backgroundLight};
+  border-radius: ${({ theme }) => theme.sizes.borderRadius.large};
+  padding: 40px;
+  text-align: center;
+  color: ${({ theme }) => theme.colors.textSecondary};
+  font-size: ${({ theme }) => theme.fonts.sizes.xl};
+  font-weight: ${({ theme }) => theme.fonts.weights.medium};
+  border: 2px dashed ${({ theme }) => theme.colors.borderLight};
 `;

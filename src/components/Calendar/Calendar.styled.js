@@ -164,7 +164,7 @@ export const NavAction = styled.div`
 `;
 
 export const CalendarPeriod = styled.div`
-  padding: 0 7px;
+  padding: 14px 7px;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
     padding: 0;

@@ -25,6 +25,8 @@ export const ColumnTitleText = styled.p`
   text-transform: uppercase;
 `;
 
+
+
 export const CardsContainer = styled.div`
   width: 100%;
   display: block;
@@ -36,3 +38,4 @@ export const CardsContainer = styled.div`
     overflow-y: auto;
   }
 `;
+

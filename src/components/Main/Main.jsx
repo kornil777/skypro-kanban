@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
-import { useLocation } from "react-router-dom";
 import { useTasks } from "../../context/TasksContext";
 import ColumnComponent from "../Column/Column.jsx";
+import SkeletonCard from "../SkeletonCard/SkeletonCard";
 import {
   MainContainer,
   MainBlock,
@@ -13,18 +13,20 @@ import {
   ErrorText,
   RetryButton,
   Container,
+  EmptyBoardMessage,
+  Column,
+  ColumnTitle,
+  ColumnTitleText,
+  CardsContainer,
 } from "./Main.styled.js";
 
 function Main() {
-  const location = useLocation();
   const { tasks, loading, error, loadTasks } = useTasks();
 
   useEffect(() => {
-    // Загружаем задачи при монтировании и при изменении пути (например, после возврата с модалки)
     loadTasks();
-  }, [location.pathname, loadTasks]);
+  }, [loadTasks]);
 
-  // Группируем карточки по статусам
   const groupedTasks = tasks.reduce((groups, task) => {
     if (!groups[task.status]) {
       groups[task.status] = [];
@@ -33,7 +35,7 @@ function Main() {
       id: task._id,
       title: task.title,
       theme: task.topic,
-      date: new Date(task.date).toLocaleDateString('ru-RU'),
+      date: task.date,
       status: task.status,
       description: task.description,
     });
@@ -47,21 +49,6 @@ function Main() {
     "Тестирование",
     "Готово",
   ];
-
-  if (loading) {
-    return (
-      <MainContainer>
-        <Container>
-          <MainBlock>
-            <LoadingContainer>
-              <LoadingSpinner />
-              <LoadingText>Загрузка задач...</LoadingText>
-            </LoadingContainer>
-          </MainBlock>
-        </Container>
-      </MainContainer>
-    );
-  }
 
   if (error) {
     return (
@@ -80,6 +67,18 @@ function Main() {
     );
   }
 
+  if (!loading && tasks.length === 0) {
+    return (
+      <MainContainer>
+        <Container>
+          <MainBlock>
+            <EmptyBoardMessage>Новых задач нет</EmptyBoardMessage>
+          </MainBlock>
+        </Container>
+      </MainContainer>
+    );
+  }
+
   return (
     <MainContainer>
       <Container>
@@ -90,6 +89,7 @@ function Main() {
                 key={status}
                 title={status}
                 cards={groupedTasks[status] || []}
+                isLoading={loading}
               />
             ))}
           </MainContent>

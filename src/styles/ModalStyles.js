@@ -25,9 +25,9 @@ export const ModalStyles = createGlobalStyle`
   .popup-container {
     display: block;
     margin: 0 auto;
-    background-color: #FFFFFF;
+    background-color: ${({ theme }) => theme.colors.backgroundLight};
     border-radius: 10px;
-    border: 0.7px solid #D4DBE5;
+    border: 0.7px solid ${({ theme }) => theme.colors.border};
     box-shadow: 0px 4px 67px -12px rgba(0, 0, 0, 0.13);
     position: relative;
     z-index: 1001;
@@ -69,7 +69,7 @@ export const ModalStyles = createGlobalStyle`
     position: absolute;
     top: 20px;
     right: 30px;
-    color: #94A6BE;
+    color: ${({ theme }) => theme.colors.textSecondary};
     cursor: pointer;
     font-size: 24px;
     line-height: 1;
@@ -79,7 +79,7 @@ export const ModalStyles = createGlobalStyle`
   }
 
   .pop-new-card__close:hover {
-    color: #000000;
+    color: ${({ theme }) => theme.colors.textPrimary};
   }
 
   .pop-new-card__wrap {
@@ -107,12 +107,13 @@ export const ModalStyles = createGlobalStyle`
     outline: none;
     padding: 14px;
     background: transparent;
-    border: 0.7px solid rgba(148, 166, 190, 0.4);
+    background: transparent;
+    border-color: ${({ theme }) => theme.colors.borderLight};
+    color: ${({ theme }) => theme.colors.textPrimary};
     border-radius: 8px;
     font-size: 14px;
     line-height: 1;
     letter-spacing: -0.14px;
-    color: #000000;
     font-family: "Roboto", Arial, Helvetica, sans-serif;
   }
 
@@ -234,7 +235,7 @@ export const ModalStyles = createGlobalStyle`
   }
 
   .pop-browse__ttl {
-    color: #000;
+    color: ${({ theme }) => theme.colors.textPrimary};
     font-size: 20px;
     font-weight: 600;
     line-height: 24px;
@@ -282,8 +283,9 @@ export const ModalStyles = createGlobalStyle`
     width: 100%;
     outline: none;
     padding: 14px;
-    background: #EAEEF6;
-    border: 0.7px solid rgba(148, 166, 190, 0.4);
+    background: transparent;
+    border-color: ${({ theme }) => theme.colors.borderLight};
+    color: ${({ theme }) => theme.colors.textPrimary};
     border-radius: 8px;
     font-size: 14px;
     line-height: 1.5;
@@ -326,20 +328,55 @@ export const ModalStyles = createGlobalStyle`
   }
 
   .status__theme {
-    border-radius: 24px;
-    border: 0.7px solid rgba(148, 166, 190, 0.4);
-    color: #94A6BE;
-    padding: 11px 14px 10px;
-    margin-right: 7px;
-    margin-bottom: 7px;
-    cursor: pointer;
-  }
+  border-radius: 24px;
+  padding: 11px 14px 10px;
+  margin-right: 7px;
+  margin-bottom: 7px;
+  display: inline-block;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  line-height: 1;
+  letter-spacing: -0.14px;
+  cursor: pointer;
+  border: 0.7px solid transparent;
+}
+ .status-view {
+  background-color: #94A6BE !important;
+  color: #FFFFFF !important;
+  border-color: #94A6BE !important;
+}
+
+/* Режим редактирования: выбранный статус */
+.status-edit-selected {
+  background-color: #94A6BE !important;
+  color: #FFFFFF !important;
+  border-color: #94A6BE !important;
+}
+
+/* Режим редактирования: невыбранный статус */
+.status-edit-unselected {
+  background-color: #FFFFFF !important;
+  color: #94A6BE !important;
+  
+}
+
+.status-edit-unselected:hover {
+  background-color: #F5F5F5 !important;
+  border-color: #333333 !important;
+}
+
+/* Скрытые статусы */
+._hide {
+  display: none !important;
+}
 
   .status__theme p {
     font-size: 14px;
     line-height: 1;
     letter-spacing: -0.14px;
   }
+
+  
 
   /* Стили для PopExit (выход) */
   .pop-exit {
@@ -734,6 +771,8 @@ export const ModalStyles = createGlobalStyle`
     background-color: #EAEEF6 !important;
   }
 
+  
+
   /* Адаптивность для статусов */
   @media (max-width: 660px) {
     .status__themes {
@@ -767,4 +806,93 @@ export const ModalStyles = createGlobalStyle`
     }
   }
   }
+  .popup-container {
+    display: block;
+    margin: 0 auto;
+    background-color: ${({ theme }) => theme.colors.backgroundLight};
+    border-radius: 10px;
+    border: 0.7px solid ${({ theme }) => theme.colors.border};
+    box-shadow: 0px 4px 67px -12px rgba(0, 0, 0, 0.13);
+    position: relative;
+    z-index: 1001;
+  }
+  .pop-new-card__ttl,
+  .pop-browse__ttl {
+    color: ${({ theme }) => theme.colors.textPrimary};
+  }
+  .pop-new-card__close {
+    color: ${({ theme }) => theme.colors.textSecondary};
+  }
+  .pop-new-card__close:hover {
+    color: ${({ theme }) => theme.colors.textPrimary};
+  }
+  .form-new__input,
+  .form-new__area,
+  .form-browse__area {
+    background: transparent;
+    border-color: ${({ theme }) => theme.colors.borderLight};
+    color: ${({ theme }) => theme.colors.textPrimary};
+  }
+  .form-new__input::placeholder,
+  .form-new__area::placeholder,
+  .form-browse__area::placeholder {
+    color: ${({ theme }) => theme.colors.textSecondary};
+  }
+  .subttl {
+    color: ${({ theme }) => theme.colors.textPrimary};
+  }
+  .calendar__ttl,
+  .categories__p,
+  .status__p {
+    color: ${({ theme }) => theme.colors.textPrimary};
+  }
+  .calendar__month,
+  .calendar__day-name,
+  .calendar__cell,
+  .nav__action svg {
+    color: ${({ theme }) => theme.colors.textSecondary};
+    fill: ${({ theme }) => theme.colors.textSecondary};
+  }
+  .calendar__cell._active-day {
+    background-color: ${({ theme }) => theme.colors.textSecondary};
+    color: ${({ theme }) => theme.colors.textLight};
+  }
+  .calendar__cell._current {
+    font-weight: 700;
+  }
+  ._weekend {
+    color: ${({ theme }) => theme.colors.weekend};
+  }
+  .categories__theme {
+    opacity: 0.4;
+  }
+  .categories__theme._active-category {
+    opacity: 1;
+  }
+  /* цвета категорий остаются неизменными, они заданы через классы */
+  .status__theme {
+    border-color: ${({ theme }) => theme.colors.borderLight};
+    color: ${({ theme }) => theme.colors.textSecondary};
+  }
+  .status__theme.edit-selected {
+    background-color: ${({ theme }) => theme.colors.textSecondary};
+    color: ${({ theme }) => theme.colors.textLight};
+    border-color: ${({ theme }) => theme.colors.textSecondary};
+  }
+  .status__theme.edit-unselected {
+    background-color: ${({ theme }) => theme.colors.backgroundLight};
+    color: ${({ theme }) => theme.colors.textSecondary};
+    border: 0.7px solid ${({ theme }) => theme.colors.textPrimary}; /* черная рамка */
+  }
+  /* кнопки */
+  ._btn-bor {
+    border-color: ${({ theme }) => theme.colors.primary};
+    color: ${({ theme }) => theme.colors.primary};
+  }
+  ._btn-bg {
+    background-color: ${({ theme }) => theme.colors.primary};
+    color: ${({ theme }) => theme.colors.textLight};
+  }
+  /* ховеры уже в глобальных стилях */
 `;
+

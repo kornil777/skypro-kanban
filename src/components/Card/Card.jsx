@@ -1,5 +1,6 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useDrag } from 'react-dnd';
+import { ItemTypes } from '../../constants/dndTypes';
 import {
   CardsItem,
   CardsCard,
@@ -14,50 +15,59 @@ import {
   CardDateText
 } from './Card.styled';
 
-function Card({ id, title, category, date, status }) {
-  const navigate = useNavigate();
+function Card({ id, title, category, date, status, description }) {
+  const isDone = status === 'Готово';
+  const [{ isDragging }, dragRef] = useDrag(() => ({
+    type: ItemTypes.CARD,
+    item: { 
+      id, 
+      title, 
+      category, 
+      date, 
+      status, 
+      description,
+      topic: category 
+    },
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
+    }),
+  }));
 
   const formatDate = (dateString) => {
     if (!dateString) return '30.10.23';
-    
-    if (dateString.length === 8) return dateString;
-    
-    if (dateString.length === 10) {
-      const [day, month, year] = dateString.split('.');
-      return `${day}.${month}.${year.slice(2)}`;
-    }
-    
-    return '30.10.23';
-  };
-
-  const handleCardClick = () => {
-    navigate(`/card/${id}`);
-  };
-
-  const handleButtonClick = (e) => {
-    e.stopPropagation();
-    navigate(`/card/${id}`);
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return '30.10.23';
+    return date.toLocaleDateString('ru-RU', {
+      day: '2-digit',
+      month: '2-digit',
+      year: '2-digit'
+    }).replace(/\//g, '.');
   };
 
   const formattedDate = formatDate(date);
 
   return (
-    <CardsItem onClick={handleCardClick}>
+    <CardsItem
+      ref={dragRef}
+      onClick={() => window.location.assign(`/card/${id}`)}
+      style={{
+        opacity: isDragging ? 0.5 : 1,
+        cursor: 'grab',
+      }}
+    >
       <CardsCard>
         <CardGroup>
           <CardTheme $category={category}>
             <CardThemeText>{category}</CardThemeText>
           </CardTheme>
-          <div onClick={handleButtonClick} style={{ cursor: 'pointer' }}>
-            <CardBtn>
-              <CardBtnDot></CardBtnDot>
-              <CardBtnDot></CardBtnDot>
-              <CardBtnDot></CardBtnDot>
-            </CardBtn>
-          </div>
+          <CardBtn onClick={(e) => e.stopPropagation()}>
+            <CardBtnDot />
+            <CardBtnDot />
+            <CardBtnDot />
+          </CardBtn>
         </CardGroup>
         <CardContent>
-          <CardTitle>{title}</CardTitle>
+          <CardTitle $isDone={isDone}>{title}</CardTitle>
           <CardDate>
             <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 13 13" fill="none">
               <g clipPath="url(#clip0_1_415)">

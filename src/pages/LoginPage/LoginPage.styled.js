@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 export const LoginContainer = styled.div`
   width: 100%;
   min-height: 100vh;
-  background-color: ${({ theme }) => theme.colors.backgroundGray};
+  background-color: ${({ theme }) => theme.colors.backgroundMain};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -17,7 +17,7 @@ export const LoginBlock = styled.div`
   width: 100%;
   padding: 50px 60px;
   border-radius: ${({ theme }) => theme.sizes.borderRadius.large};
-  border: 0.7px solid ${({ theme }) => theme.colors.border};
+  border: 0.7px solid ${({ theme }) => theme.colors.borderLight};
   box-shadow: 0px 4px 67px -12px rgba(0, 0, 0, 0.13);
   
   @media (max-width: ${({ theme }) => theme.breakpoints.xs}) {
@@ -45,9 +45,11 @@ export const LoginInput = styled.input`
   width: 100%;
   height: 40px;
   padding: 0 15px;
+  background-color: ${({ theme }) => theme.colors.backgroundLight};
   border: 1px solid ${({ theme }) => theme.colors.borderLight};
   border-radius: ${({ theme }) => theme.sizes.borderRadius.medium};
   font-size: ${({ theme }) => theme.fonts.sizes.md};
+  color: ${({ theme }) => theme.colors.textPrimary};
   outline: none;
   transition: border-color 0.3s;
 
