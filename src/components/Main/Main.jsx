@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
+import { useTasks } from "../../context/TasksContext";
 import ColumnComponent from "../Column/Column.jsx";
+import SkeletonCard from "../SkeletonCard/SkeletonCard";
 import {
   MainContainer,
   MainBlock,
@@ -11,45 +13,35 @@ import {
   ErrorText,
   RetryButton,
   Container,
+  EmptyBoardMessage,
+  Column,
+  ColumnTitle,
+  ColumnTitleText,
+  CardsContainer,
 } from "./Main.styled.js";
 
 function Main() {
-  const [cards, setCards] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { tasks, loading, error, loadTasks } = useTasks();
 
-  // Имитируем загрузку данных с сервера
   useEffect(() => {
-    const loadCards = async () => {
-      try {
-        // Имитация задержки загрузки (2 секунды)
-        await new Promise((resolve) => setTimeout(resolve, 2000));
+    loadTasks();
+  }, [loadTasks]);
 
-        // Импортируем данные (имитация API запроса)
-        const { cardList } = await import("../../data.js");
-
-        setCards(cardList);
-        setIsLoading(false);
-      } catch (err) {
-        setError("Ошибка при загрузке данных");
-        setIsLoading(false);
-        console.error("Ошибка загрузки:", err);
-      }
-    };
-
-    loadCards();
-  }, []);
-
-  // Группируем карточки по статусам
-  const groupedCards = cards.reduce((groups, card) => {
-    if (!groups[card.status]) {
-      groups[card.status] = [];
+  const groupedTasks = tasks.reduce((groups, task) => {
+    if (!groups[task.status]) {
+      groups[task.status] = [];
     }
-    groups[card.status].push(card);
+    groups[task.status].push({
+      id: task._id,
+      title: task.title,
+      theme: task.topic,
+      date: task.date,
+      status: task.status,
+      description: task.description,
+    });
     return groups;
   }, {});
 
-  // Определяем порядок колонок
   const columnOrder = [
     "Без статуса",
     "Нужно сделать",
@@ -58,39 +50,49 @@ function Main() {
     "Готово",
   ];
 
+  if (error) {
+    return (
+      <MainContainer>
+        <Container>
+          <MainBlock>
+            <ErrorContainer>
+              <ErrorText>{error}</ErrorText>
+              <RetryButton onClick={() => loadTasks()}>
+                Попробовать снова
+              </RetryButton>
+            </ErrorContainer>
+          </MainBlock>
+        </Container>
+      </MainContainer>
+    );
+  }
+
+  if (!loading && tasks.length === 0) {
+    return (
+      <MainContainer>
+        <Container>
+          <MainBlock>
+            <EmptyBoardMessage>Новых задач нет</EmptyBoardMessage>
+          </MainBlock>
+        </Container>
+      </MainContainer>
+    );
+  }
+
   return (
     <MainContainer>
       <Container>
         <MainBlock>
-          {isLoading ? (
-            // Показываем индикатор загрузки
-            <LoadingContainer>
-              <LoadingSpinner />
-              <LoadingText>Данные загружаются...</LoadingText>
-            </LoadingContainer>
-          ) : error ? (
-            // Показываем ошибку
-            <ErrorContainer>
-              <ErrorText>{error}</ErrorText>
-              <RetryButton
-                className="_hover01"
-                onClick={() => window.location.reload()}
-              >
-                Попробовать снова
-              </RetryButton>
-            </ErrorContainer>
-          ) : (
-            // Показываем контент после загрузки
-            <MainContent>
-              {columnOrder.map((status) => (
-                <ColumnComponent
-                  key={status}
-                  title={status}
-                  cards={groupedCards[status] || []}
-                />
-              ))}
-            </MainContent>
-          )}
+          <MainContent>
+            {columnOrder.map((status) => (
+              <ColumnComponent
+                key={status}
+                title={status}
+                cards={groupedTasks[status] || []}
+                isLoading={loading}
+              />
+            ))}
+          </MainContent>
         </MainBlock>
       </Container>
     </MainContainer>

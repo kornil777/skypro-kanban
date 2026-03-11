@@ -1,16 +1,95 @@
-# React + Vite
+Skypro Kanban Board
+Доска задач (Kanban) с возможностью создания, редактирования, удаления и перетаскивания карточек. Проект разработан в рамках учебного курса Skypro.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+🚀 Функциональность
+Регистрация и авторизация пользователей (JWT токены)
 
-Currently, two official plugins are available:
+Просмотр задач на доске в 5 колонках: Без статуса, Нужно сделать, В работе, Тестирование, Готово
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Создание новой задачи с выбором категории и даты
 
-## React Compiler
+Просмотр и редактирование задачи в модальном окне
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Перетаскивание карточек между колонками (drag-and-drop)
 
-## Expanding the ESLint configuration
+Удаление задач
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Переключение светлой/тёмной темы (сохраняется в localStorage)
+
+Индикация загрузки (скелетоны) при получении данных
+
+Сообщение при отсутствии задач
+
+🛠️ Стек технологий
+React 18 (функциональные компоненты, хуки)
+
+React Router v6 (навигация, защищённые маршруты)
+
+Axios (HTTP-запросы к API)
+
+Styled Components (стилизация, темизация)
+
+React DnD (drag-and-drop)
+
+📦 Установка и запуск
+Клонируйте репозиторий:
+
+bash
+git clone https://github.com/your-username/kanban-board.git
+cd kanban-board
+Установите зависимости:
+
+bash
+npm install
+Запустите проект в режиме разработки:
+
+bash
+npm run dev
+Откройте http://localhost:5173 в браузере.
+
+🧩 Структура проекта
+text
+src/
+├── api/                # API-запросы (axios)
+├── components/         # Переиспользуемые компоненты
+│   ├── AppRoutes/      # Маршруты приложения
+│   ├── Card/           # Карточка задачи
+│   ├── Column/         # Колонка с карточками
+│   ├── Header/         # Шапка с меню пользователя
+│   ├── Main/           # Основная доска
+│   ├── modals/         # Модальные окна (создание, просмотр, выход)
+│   ├── ProtectedRoute/ # Защита маршрутов
+│   └── SkeletonCard/   # Скелетон для загрузки
+├── constants/          # Константы (типы DnD)
+├── contexts/           # Контексты (Auth, Tasks, Theme)
+├── pages/              # Страницы (логин, регистрация, главная, 404)
+├── styles/             # Глобальные стили и тема
+├── App.jsx
+└── main.jsx
+📜 Скрипты
+npm run dev – запуск дев-сервера
+
+npm run build – сборка проекта
+
+npm run preview – предпросмотр собранного проекта
+
+🔌 Работа с API
+Проект использует внешнее API: https://wedev-api.sky.pro/api
+
+Авторизация – POST /user/login (требует пустой Content-Type)
+
+Регистрация – POST /user
+
+Задачи – GET /kanban, POST /kanban, PUT /kanban/:id, DELETE /kanban/:id (требуют Bearer токен)
+
+Все запросы к задачам выполняются с токеном, сохранённым в localStorage. Для пользовательских методов используется пустой заголовок Content-Type, для задач – application/json.
+
+🔐 Авторизация
+После успешного входа/регистрации токен и данные пользователя сохраняются в localStorage.
+
+Для доступа к защищённым страницам используется компонент ProtectedRoute.
+
+Выход из аккаунта происходит через модальное окно подтверждения.
+
+🌗 Тёмная тема
+Реализована с помощью ThemeProvider из styled-components. Переключение происходит через чекбокс в меню пользователя. Состояние темы сохраняется в localStorage. Все цвета заданы в объектах lightTheme и darkTheme в файле theme.js.

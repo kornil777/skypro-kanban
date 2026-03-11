@@ -1,25 +1,32 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../../context/AuthContext';
-import ModalCalendar from '../ModalCalendar/ModalCalendar';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useTasks } from "../../../context/TasksContext";
+import ModalCalendar from "../ModalCalendar/ModalCalendar";
 
 const PopNewCard = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('Web Design');
+  const { createTask } = useTasks();
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("Research");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
+  const [selectedDate, setSelectedDate] = useState(null);
+
+  const handleDateSelect = (isoDate, formatted) => {
+    setSelectedDate(isoDate);
+  };
 
   const categories = [
-    { id: 'webdesign', name: 'Web Design', className: '_orange' },
-    { id: 'research', name: 'Research', className: '_green' },
-    { id: 'copywriting', name: 'Copywriting', className: '_purple' }
+    { id: "webdesign", name: "Web Design", className: "_orange" },
+    { id: "research", name: "Research", className: "_green" },
+    { id: "copywriting", name: "Copywriting", className: "_purple" },
   ];
 
   useEffect(() => {
-    document.body.classList.add('modal-open');
+    document.body.classList.add("modal-open");
     return () => {
-      document.body.classList.remove('modal-open');
+      document.body.classList.remove("modal-open");
     };
   }, []);
 
@@ -27,25 +34,44 @@ const PopNewCard = () => {
     navigate(-1);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    
-    if (!title.trim()) {
-      alert('Введите название задачи');
-      return;
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  // Валидация
+  if (!title.trim()) {
+    setError('Название задачи обязательно');
+    return;
+  }
+  if (!description.trim()) {
+    setError('Описание задачи обязательно');
+    return;
+  }
+
+  setIsSubmitting(true);
+  setError('');
+
+  try {
+    const taskData = {
+      title: title.trim(),
+      topic: selectedCategory,
+      status: 'Без статуса',
+      description: description.trim(),
+      date: selectedDate || new Date().toISOString(),
+    };
+
+    const success = await createTask(taskData);
+    if (success) {
+      navigate(-1);
+    } else {
+      setError('Ошибка при создании задачи');
     }
-
-    // Здесь будет логика создания задачи
-    console.log('Создаем задачу:', {
-      title,
-      description,
-      category: selectedCategory,
-      createdBy: user?.email,
-      date: new Date().toLocaleDateString('ru-RU')
-    });
-
-    handleClose();
-  };
+  } catch (err) {
+    console.error('Create task error:', err);
+    setError(err.response?.data?.error || 'Не удалось создать задачу');
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   const handleOverlayClick = (e) => {
     if (e.target === e.currentTarget) {
@@ -58,76 +84,98 @@ const PopNewCard = () => {
       <div className="popup-container pop-new-card">
         <div className="pop-new-card__content">
           <h3 className="pop-new-card__ttl">Создание задачи</h3>
-          <button 
-            type="button" 
-            className="pop-new-card__close" 
+          <button
+            type="button"
+            className="pop-new-card__close"
             onClick={handleClose}
             aria-label="Закрыть"
           >
             &#10006;
           </button>
-          
+
+          {error && (
+            <div
+              style={{
+                color: "red",
+                marginBottom: "15px",
+                textAlign: "center",
+              }}
+            >
+              {error}
+            </div>
+          )}
+
           <div className="pop-new-card__wrap">
-            <form className="pop-new-card__form form-new" onSubmit={handleSubmit}>
+            <form
+              className="pop-new-card__form form-new"
+              onSubmit={handleSubmit}
+            >
               <div className="form-new__block">
                 <label htmlFor="formTitle" className="subttl">
                   Название задачи
                 </label>
-                <input 
-                  className="form-new__input" 
-                  type="text" 
-                  name="name" 
-                  id="formTitle" 
-                  placeholder="Введите название задачи..." 
+                <input
+                  className="form-new__input"
+                  type="text"
+                  name="name"
+                  id="formTitle"
+                  placeholder="Введите название задачи"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  autoFocus 
-                  required
+                  autoFocus
+                  disabled={isSubmitting}
                 />
               </div>
               <div className="form-new__block">
                 <label htmlFor="textArea" className="subttl">
                   Описание задачи
                 </label>
-                <textarea 
-                  className="form-new__area" 
-                  name="text" 
-                  id="textArea" 
-                  placeholder="Введите описание задачи..."
+                <textarea
+                  className="form-new__area"
+                  name="text"
+                  id="textArea"
+                  placeholder="Введите описание задачи"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
+                  disabled={isSubmitting}
                 />
               </div>
             </form>
-            
-            {/* Используем ModalCalendar для PopNewCard */}
-            <ModalCalendar type="new" />
+
+            <ModalCalendar
+              selectedDate={selectedDate}
+              onDateSelect={handleDateSelect}
+              type="new"
+            />
           </div>
-          
+
           <div className="pop-new-card__categories categories">
             <p className="categories__p subttl">Категория</p>
             <div className="categories__themes">
               {categories.map((category) => (
-                <div 
+                <div
                   key={category.id}
                   className={`categories__theme ${category.className} ${
-                    selectedCategory === category.name ? '_active-category' : ''
+                    selectedCategory === category.name ? "_active-category" : ""
                   }`}
-                  onClick={() => setSelectedCategory(category.name)}
+                  onClick={() =>
+                    !isSubmitting && setSelectedCategory(category.name)
+                  }
                 >
                   <p className={category.className}>{category.name}</p>
                 </div>
               ))}
             </div>
           </div>
-          
-          <button 
-            type="button" 
-            className="form-new__create _hover01" 
+
+          <button
+            type="button"
+            className="form-new__create _hover01"
             id="btnCreate"
             onClick={handleSubmit}
+            disabled={isSubmitting}
           >
-            Создать задачу
+            {isSubmitting ? "Создание..." : "Создать задачу"}
           </button>
         </div>
       </div>

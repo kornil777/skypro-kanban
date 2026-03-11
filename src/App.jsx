@@ -1,45 +1,27 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import { ThemeProvider } from "styled-components";
+// App.jsx
+import { BrowserRouter as Router } from "react-router-dom";
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import { ThemeProvider } from "./context/ThemeContext";
 import { AuthProvider } from "./context/AuthContext";
-import theme from "./styles/theme";
+import { TasksProvider } from "./context/TasksContext";
 import GlobalStyles from "./styles/GlobalStyles";
 import { ModalStyles } from "./styles/ModalStyles";
-import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
-
-// Страницы
-import LoginPage from "./pages/LoginPage/LoginPage";
-import RegisterPage from "./pages/RegisterPage/RegisterPage";
-import MainPage from "./pages/MainPage/MainPage";
-import CardDetailPage from "./pages/CardDetailPage/CardDetailPage";
-import NewCardPage from "./pages/NewCardPage/NewCardPage";
-import ExitPage from "./pages/ExitPage/ExitPage";
-import NotFoundPage from "./pages/NotFoundPage/NotFoundPage";
+import AppRoutes from "./components/AppRoutes/AppRoutes";
 
 function App() {
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider>
       <GlobalStyles />
       <ModalStyles />
       <AuthProvider>
-        <Router>
-          <Routes>
-            {/* Публичные маршруты */}
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            
-            {/* Защищенные маршруты */}
-            <Route element={<ProtectedRoute />}>
-              <Route path="/" element={<MainPage />} />
-              {/* Маршруты для модальных окон - они будут рендерить MainPage с модальными окнами */}
-              <Route path="/card/:id" element={<MainPage />} />
-              <Route path="/new" element={<MainPage />} />
-              <Route path="/exit" element={<MainPage />} />
-            </Route>
-            
-            {/* Маршрут 404 */}
-            <Route path="*" element={<NotFoundPage />} />
-          </Routes>
-        </Router>
+        <TasksProvider>
+          <Router>
+            <DndProvider backend={HTML5Backend}>
+              <AppRoutes />
+            </DndProvider>
+          </Router>
+        </TasksProvider>
       </AuthProvider>
     </ThemeProvider>
   );
